@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from utils.translations import TRANSLATIONS
 
 # Page configuration
 st.set_page_config(
@@ -9,138 +10,154 @@ st.set_page_config(
 )
 
 # Initialize session state
+if 'language' not in st.session_state:
+    st.session_state.language = 'th'
 if 'show_results' not in st.session_state:
     st.session_state.show_results = False
 
+# Language selector
+language = st.selectbox('🌐 Language / ภาษา', ['ไทย', 'English'])
+st.session_state.language = 'th' if language == 'ไทย' else 'en'
+
+# Get translations for current language
+t = TRANSLATIONS[st.session_state.language]
+
 # Title
-st.title("Kidney Dialysis Cost Calculator")
-st.markdown("Calculate and compare treatment costs based on your situation")
+st.title(t['title'])
+st.markdown(t['subtitle'])
 
 # Only show form if not showing results
 if not st.session_state.show_results:
     with st.form("cost_calculator"):
         # Basic information
-        st.subheader("Basic Information")
-        employment = st.radio("Are you currently working?", ["Yes", "No"])
+        st.subheader(t['basic_info'])
+        employment = st.radio(t['employment'], [t['yes'], t['no']])
+
+        # Work impact question (shown only if employed)
+        work_impact = None
+        if employment == t['yes']:
+            work_impact = st.radio(
+                t['work_impact'],
+                [t['leave_job'], t['work_during_dialysis'], t['no_income_effect']]
+            )
 
         monthly_income = st.number_input(
-            "Monthly income (THB)",
+            t['monthly_income'],
             min_value=0,
             value=0,
             step=1000
         )
 
         # Medical Information
-        st.subheader("Medical Information")
+        st.subheader(t['medical_info'])
         medical_conditions = st.multiselect(
-            "Select any additional medical conditions",
-            ["Diabetes", "High Blood Pressure", "Heart Disease", "None"],
-            default=["None"]
+            t['select_conditions'],
+            [t['diabetes'], t['hypertension'], t['heart_disease'], t['none']],
+            default=[t['none']]
         )
 
         # Care needs
-        st.subheader("Care Requirements")
+        st.subheader(t['care_requirements'])
         care_needs = st.radio(
-            "Do you require assistance?",
+            t['assistance_needs'],
             [
-                "No assistance needed",
-                "Need assistance with travel only",
-                "Need daily assistance"
+                t['no_assistance'],
+                t['travel_assistance'],
+                t['daily_assistance']
             ]
         )
 
         # Caregiver details
-        if care_needs != "No assistance needed":
-            st.subheader("Caregiver Details")
+        if care_needs != t['no_assistance']:
+            st.subheader(t['caregiver_details'])
             caregiver_income = st.number_input(
-                "Caregiver's monthly income (THB)",
+                t['caregiver_income'],
                 min_value=0,
                 value=0,
                 step=1000
             )
 
         # Home Assessment
-        st.subheader("Home Assessment")
+        st.subheader(t['home_assessment'])
         home_suitable = st.radio(
-            "Is your home suitable for peritoneal dialysis?",
-            ["Yes", "No", "Not sure"]
+            t['pd_suitability'],
+            [t['yes'], t['no']]
         )
 
-        # Utilities cost for PD
         utilities_cost = st.number_input(
-            "Monthly utilities cost (water, electricity) (THB)",
+            t['utilities_cost'],
             min_value=0,
             value=0,
             step=100
         )
 
         # Travel information
-        st.subheader("Travel Information")
+        st.subheader(t['travel_info'])
         distance = st.number_input(
-            "Distance to nearest dialysis center (km)",
+            t['distance'],
             min_value=0,
             value=0,
             step=1
         )
 
         travel_cost = st.number_input(
-            "Cost per visit to dialysis center (THB)",
+            t['travel_cost'],
             min_value=0,
             value=0,
             step=10
         )
 
         food_cost = st.number_input(
-            "Food and refreshments cost per visit (THB)",
+            t['food_cost'],
             min_value=0,
             value=0,
             step=10
         )
 
         # Submit button
-        submitted = st.form_submit_button("Calculate Costs")
+        submitted = st.form_submit_button(t['calculate'])
 
         if submitted:
-            # Base costs
-            base_costs = {
-                'apd': 30000,    # Base APD cost
-                'capd': 25000,   # Base CAPD cost
-                'hd': 30000      # Base HD cost
+            # Calculate income loss based on work impact
+            income_loss_factor = {
+                t['leave_job']: 1.0,  # 100% income loss
+                t['work_during_dialysis']: 0.3,  # 30% income loss
+                t['no_income_effect']: 0.0  # No income loss
             }
 
             # Calculate detailed costs
             detailed_costs = {
                 'apd': {
                     'accounting': {
-                        'base_cost': base_costs['apd'],
+                        'base_cost': 30000,
                         'utilities': utilities_cost,
-                        'caregiver': 0 if care_needs == "No assistance needed" else 15000
+                        'caregiver': 0 if care_needs == t['no_assistance'] else 15000
                     },
                     'opportunity': {
-                        'caregiver_lost_income': 0 if care_needs == "No assistance needed" else (caregiver_income * 0.1),
-                        'patient_lost_income': monthly_income * 0.1 if employment == "Yes" else 0
+                        'caregiver_lost_income': 0 if care_needs == t['no_assistance'] else (caregiver_income * 0.1),
+                        'patient_lost_income': monthly_income * (income_loss_factor.get(work_impact, 0) if employment == t['yes'] else 0)
                     }
                 },
                 'capd': {
                     'accounting': {
-                        'base_cost': base_costs['capd'],
-                        'caregiver': 0 if care_needs == "No assistance needed" else 15000
+                        'base_cost': 25000,
+                        'caregiver': 0 if care_needs == t['no_assistance'] else 15000
                     },
                     'opportunity': {
-                        'caregiver_lost_income': 0 if care_needs == "No assistance needed" else (caregiver_income * 0.15),
-                        'patient_lost_income': monthly_income * 0.15 if employment == "Yes" else 0
+                        'caregiver_lost_income': 0 if care_needs == t['no_assistance'] else (caregiver_income * 0.15),
+                        'patient_lost_income': monthly_income * (income_loss_factor.get(work_impact, 0) if employment == t['yes'] else 0)
                     }
                 },
                 'hd': {
                     'accounting': {
-                        'base_cost': base_costs['hd'],
+                        'base_cost': 30000,
                         'travel': travel_cost * 13,  # 13 visits per month
-                        'caregiver': 0 if care_needs == "No assistance needed" else 15000,
+                        'caregiver': 0 if care_needs == t['no_assistance'] else 15000,
                         'food': food_cost * 13  # 13 visits per month
                     },
                     'opportunity': {
-                        'caregiver_lost_income': 0 if care_needs == "No assistance needed" else (caregiver_income * 0.3),
-                        'patient_lost_income': monthly_income * 0.3 if employment == "Yes" else 0
+                        'caregiver_lost_income': 0 if care_needs == t['no_assistance'] else (caregiver_income * 0.3),
+                        'patient_lost_income': monthly_income * (income_loss_factor.get(work_impact, 0) if employment == t['yes'] else 0)
                     }
                 }
             }
@@ -169,45 +186,45 @@ if not st.session_state.show_results:
 
 # Show results if calculation is done
 if st.session_state.show_results:
-    st.header("Treatment Cost Comparison")
+    st.header(t['cost_comparison'])
 
     # Monthly costs summary
-    st.subheader("Monthly Costs Overview")
+    st.subheader(t['monthly_overview'])
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.metric("Automated PD (APD)", f"฿{st.session_state.monthly_totals['apd']:,.2f}")
-        with st.expander("See detailed breakdown"):
-            st.markdown("### Accounting Costs")
+        st.metric("APD", f"฿{st.session_state.monthly_totals['apd']:,.2f}")
+        with st.expander(t['see_details']):
+            st.markdown(f"### {t['accounting_costs']}")
             for key, value in st.session_state.detailed_costs['apd']['accounting'].items():
-                st.markdown(f"- {key.replace('_', ' ').title()}: ฿{value:,.2f}")
-            st.markdown("### Opportunity Costs")
+                st.markdown(f"- {t[key]}: ฿{value:,.2f}")
+            st.markdown(f"### {t['opportunity_costs']}")
             for key, value in st.session_state.detailed_costs['apd']['opportunity'].items():
-                st.markdown(f"- {key.replace('_', ' ').title()}: ฿{value:,.2f}")
+                st.markdown(f"- {t[key]}: ฿{value:,.2f}")
 
     with col2:
-        st.metric("Continuous APD (CAPD)", f"฿{st.session_state.monthly_totals['capd']:,.2f}")
-        with st.expander("See detailed breakdown"):
-            st.markdown("### Accounting Costs")
+        st.metric("CAPD", f"฿{st.session_state.monthly_totals['capd']:,.2f}")
+        with st.expander(t['see_details']):
+            st.markdown(f"### {t['accounting_costs']}")
             for key, value in st.session_state.detailed_costs['capd']['accounting'].items():
-                st.markdown(f"- {key.replace('_', ' ').title()}: ฿{value:,.2f}")
-            st.markdown("### Opportunity Costs")
+                st.markdown(f"- {t[key]}: ฿{value:,.2f}")
+            st.markdown(f"### {t['opportunity_costs']}")
             for key, value in st.session_state.detailed_costs['capd']['opportunity'].items():
-                st.markdown(f"- {key.replace('_', ' ').title()}: ฿{value:,.2f}")
+                st.markdown(f"- {t[key]}: ฿{value:,.2f}")
 
     with col3:
-        st.metric("Hemodialysis (HD)", f"฿{st.session_state.monthly_totals['hd']:,.2f}")
-        with st.expander("See detailed breakdown"):
-            st.markdown("### Accounting Costs")
+        st.metric("HD", f"฿{st.session_state.monthly_totals['hd']:,.2f}")
+        with st.expander(t['see_details']):
+            st.markdown(f"### {t['accounting_costs']}")
             for key, value in st.session_state.detailed_costs['hd']['accounting'].items():
-                st.markdown(f"- {key.replace('_', ' ').title()}: ฿{value:,.2f}")
-            st.markdown("### Opportunity Costs")
+                st.markdown(f"- {t[key]}: ฿{value:,.2f}")
+            st.markdown(f"### {t['opportunity_costs']}")
             for key, value in st.session_state.detailed_costs['hd']['opportunity'].items():
-                st.markdown(f"- {key.replace('_', ' ').title()}: ฿{value:,.2f}")
+                st.markdown(f"- {t[key]}: ฿{value:,.2f}")
 
     # Long-term projections
-    st.subheader("Long-term Cost Projections")
-    with st.expander("See yearly projections"):
+    st.subheader(t['long_term_projections'])
+    with st.expander(t['yearly_projections']):
         projections_df = pd.DataFrame({
             'Time Period': ['1 Year', '5 Years', '10 Years'],
             'APD': [
@@ -228,15 +245,13 @@ if st.session_state.show_results:
         })
         st.table(projections_df)
 
-    if st.button("Start Over"):
+    if st.button(t['start_over']):
         st.session_state.show_results = False
         st.rerun()
 
     # Footer with notes
     st.markdown("---")
-    st.markdown("""
-    **Notes:**
-    - Costs are estimates and may vary based on individual circumstances
-    - Yearly projections include a 3% annual increase for inflation
-    - Consult healthcare professionals for medical advice
-    """)
+    st.markdown(f"**{t['notes']}:**")
+    st.markdown(t['costs_may_vary'])
+    st.markdown(t['inflation_note'])
+    st.markdown(t['consult_note'])
