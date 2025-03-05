@@ -208,90 +208,41 @@ if not st.session_state.show_results:
             st.session_state.show_results = True
             st.rerun()
 
-def create_cost_comparison_chart(costs, labels):
-    """Create a bar chart comparing costs between treatments"""
+# Show results if calculation is done
+if st.session_state.show_results:
+    st.header(t['cost_comparison'])
+
+    # Cost comparison bar chart
     fig = go.Figure(data=[
         go.Bar(
-            x=list(costs.keys()),
-            y=list(costs.values()),
-            text=[f"฿{cost:,.0f}" for cost in costs.values()],
+            x=['APD', 'CAPD', 'HD'],
+            y=[
+                st.session_state.monthly_totals['apd'],
+                st.session_state.monthly_totals['capd'],
+                st.session_state.monthly_totals['hd']
+            ],
+            text=[f"฿{cost:,.0f}" for cost in st.session_state.monthly_totals.values()],
             textposition='auto',
         )
     ])
 
     fig.update_layout(
-        title=labels['title'],
-        xaxis_title=labels['xaxis'],
-        yaxis_title=labels['yaxis'],
+        title=t['monthly_overview'],
+        yaxis_title='Monthly Cost (THB)',
         height=400,
-        margin=dict(t=30, b=0, l=0, r=0),
+        margin=dict(t=50, b=0, l=0, r=0),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
     )
 
-    return fig
+    st.plotly_chart(fig, use_container_width=True)
 
-def create_cost_breakdown_chart(costs, treatment, labels):
-    """Create a pie chart showing cost breakdown for a treatment"""
-    values = []
-    labels_list = []
-
-    # Combine all costs
-    all_costs = {}
-    all_costs.update(costs[treatment]['accounting'])
-    all_costs.update(costs[treatment]['opportunity'])
-
-    # Filter out zero values
-    for key, value in all_costs.items():
-        if value > 0:
-            values.append(value)
-            labels_list.append(labels[key])
-
-    fig = go.Figure(data=[go.Pie(
-        labels=labels_list,
-        values=values,
-        hole=.4,
-        textinfo='percent+label'
-    )])
-
-    fig.update_layout(
-        height=300,
-        margin=dict(t=30, b=0, l=0, r=0),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-    )
-
-    return fig
-
-# Show results if calculation is done
-if st.session_state.show_results:
-    st.header(t['cost_comparison'])
-
-    # Monthly cost comparison chart
-    monthly_chart = create_cost_comparison_chart(
-        st.session_state.monthly_totals,
-        {
-            'title': t['monthly_overview'],
-            'xaxis': 'Treatment Type',
-            'yaxis': 'Monthly Cost (THB)'
-        }
-    )
-    st.plotly_chart(monthly_chart, use_container_width=True)
-
-    # Detailed breakdown for each treatment
+    # Monthly costs details
     st.subheader(t['monthly_overview'])
+    col1, col2, col3 = st.columns(3)
 
-    # Use tabs for better mobile experience
-    tab1, tab2, tab3 = st.tabs(["APD", "CAPD", "HD"])
-
-    with tab1:
+    with col1:
         st.metric("APD", f"฿{st.session_state.monthly_totals['apd']:,.2f}")
-        breakdown_chart_apd = create_cost_breakdown_chart(
-            st.session_state.detailed_costs,
-            'apd',
-            t
-        )
-        st.plotly_chart(breakdown_chart_apd, use_container_width=True)
         with st.expander(t['see_details']):
             st.markdown(f"### {t['accounting_costs']}")
             for key, value in st.session_state.detailed_costs['apd']['accounting'].items():
@@ -300,14 +251,8 @@ if st.session_state.show_results:
             for key, value in st.session_state.detailed_costs['apd']['opportunity'].items():
                 st.markdown(f"- {t[key]}: ฿{value:,.2f}")
 
-    with tab2:
+    with col2:
         st.metric("CAPD", f"฿{st.session_state.monthly_totals['capd']:,.2f}")
-        breakdown_chart_capd = create_cost_breakdown_chart(
-            st.session_state.detailed_costs,
-            'capd',
-            t
-        )
-        st.plotly_chart(breakdown_chart_capd, use_container_width=True)
         with st.expander(t['see_details']):
             st.markdown(f"### {t['accounting_costs']}")
             for key, value in st.session_state.detailed_costs['capd']['accounting'].items():
@@ -316,14 +261,8 @@ if st.session_state.show_results:
             for key, value in st.session_state.detailed_costs['capd']['opportunity'].items():
                 st.markdown(f"- {t[key]}: ฿{value:,.2f}")
 
-    with tab3:
+    with col3:
         st.metric("HD", f"฿{st.session_state.monthly_totals['hd']:,.2f}")
-        breakdown_chart_hd = create_cost_breakdown_chart(
-            st.session_state.detailed_costs,
-            'hd',
-            t
-        )
-        st.plotly_chart(breakdown_chart_hd, use_container_width=True)
         with st.expander(t['see_details']):
             st.markdown(f"### {t['accounting_costs']}")
             for key, value in st.session_state.detailed_costs['hd']['accounting'].items():
@@ -332,49 +271,8 @@ if st.session_state.show_results:
             for key, value in st.session_state.detailed_costs['hd']['opportunity'].items():
                 st.markdown(f"- {t[key]}: ฿{value:,.2f}")
 
-    # Long-term projections visualization
+    # Yearly projections in table format
     st.subheader(t['long_term_projections'])
-    projections_data = {
-        'APD': [
-            st.session_state.yearly_costs['apd']['1_year'],
-            st.session_state.yearly_costs['apd']['5_years'],
-            st.session_state.yearly_costs['apd']['10_years']
-        ],
-        'CAPD': [
-            st.session_state.yearly_costs['capd']['1_year'],
-            st.session_state.yearly_costs['capd']['5_years'],
-            st.session_state.yearly_costs['capd']['10_years']
-        ],
-        'HD': [
-            st.session_state.yearly_costs['hd']['1_year'],
-            st.session_state.yearly_costs['hd']['5_years'],
-            st.session_state.yearly_costs['hd']['10_years']
-        ]
-    }
-
-    fig = go.Figure()
-    x_axis = ['1 Year', '5 Years', '10 Years']
-
-    for treatment in projections_data:
-        fig.add_trace(go.Bar(
-            name=treatment,
-            x=x_axis,
-            y=projections_data[treatment],
-            text=[f"฿{cost:,.0f}" for cost in projections_data[treatment]],
-            textposition='auto',
-        ))
-
-    fig.update_layout(
-        barmode='group',
-        height=400,
-        margin=dict(t=30, b=0, l=0, r=0),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
-
-    # Table view (collapsible for mobile)
     with st.expander(t['yearly_projections']):
         projections_df = pd.DataFrame({
             'Time Period': ['1 Year', '5 Years', '10 Years'],
