@@ -15,14 +15,29 @@ def load_css():
     with open("assets/style.css") as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-def main():
-    load_css()
-    
-    # Initialize session state
+def initialize_session_state():
     if 'current_step' not in st.session_state:
         st.session_state.current_step = 0
+    if 'answers' not in st.session_state:
         st.session_state.answers = {}
+    if 'show_comparison' not in st.session_state:
         st.session_state.show_comparison = False
+
+    # Initialize all possible form field keys
+    default_keys = [
+        'employment', 'work_impact', 'income', 'caregiver_needs',
+        'caregiver_name', 'caregiver_income', 'caregiver_payment',
+        'home_suitable', 'clean_corner', 'has_sink', 'home_score',
+        'knows_travel_cost', 'travel_cost', 'distance', 'transport_mode'
+    ]
+
+    for key in default_keys:
+        if key not in st.session_state:
+            st.session_state[key] = None
+
+def main():
+    load_css()
+    initialize_session_state()
 
     # Header
     st.title("Kidney Dialysis Cost Calculator")

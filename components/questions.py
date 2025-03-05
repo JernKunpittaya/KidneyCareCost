@@ -75,22 +75,42 @@ class QuestionFlow:
         self._next_button("caregiver_needs")
 
     def _caregiver_details(self):
-        if "require assistance" in st.session_state.answers.get("caregiver_needs", ""):
+        if "require assistance" in st.session_state.get("caregiver_needs", ""):
             st.subheader("Caregiver Details")
-            st.text_input("Who will your caretaker be?", key="caregiver_name")
-            st.number_input(
+
+            # Store individual caregiver fields
+            caregiver_name = st.text_input("Who will your caretaker be?", key="caregiver_name")
+            caregiver_income = st.number_input(
                 "What is their monthly income? (THB)",
                 min_value=0,
                 step=1000,
                 key="caregiver_income"
             )
-            st.number_input(
+            caregiver_payment = st.number_input(
                 "Monthly payment to caregiver (THB)",
                 min_value=0,
                 step=1000,
                 key="caregiver_payment"
             )
-        self._next_button("caregiver_details")
+
+            # Store all caregiver details in a dictionary
+            caregiver_info = {
+                "name": caregiver_name,
+                "income": caregiver_income,
+                "payment": caregiver_payment
+            }
+
+            if st.button("Next"):
+                # Store individual fields in answers
+                st.session_state.answers["caregiver_name"] = caregiver_name
+                st.session_state.answers["caregiver_income"] = caregiver_income
+                st.session_state.answers["caregiver_payment"] = caregiver_payment
+                st.session_state.current_step += 1
+                st.rerun()
+        else:
+            # Skip caregiver details if no assistance needed
+            st.session_state.current_step += 1
+            st.rerun()
 
     def _home_suitability(self):
         st.subheader("Home Suitability for PD")
@@ -161,6 +181,7 @@ class QuestionFlow:
 
     def _next_button(self, key):
         if st.button("Next"):
-            st.session_state.answers[key] = st.session_state[key]
-            st.session_state.current_step += 1
-            st.rerun()
+            if key in st.session_state:
+                st.session_state.answers[key] = st.session_state[key]
+                st.session_state.current_step += 1
+                st.rerun()
