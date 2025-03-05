@@ -49,16 +49,30 @@ if not st.session_state.show_results:
             ]
         )
 
+        # Caregiver details
+        if care_needs != "No assistance needed":
+            st.subheader("Caregiver Details")
+            caregiver_income = st.number_input(
+                "Caregiver's monthly income (THB)",
+                min_value=0,
+                value=0,
+                step=1000
+            )
+
         # Home Assessment
-        st.subheader("Home Assessment for PD")
+        st.subheader("Home Assessment")
         home_suitable = st.radio(
             "Is your home suitable for peritoneal dialysis?",
             ["Yes", "No", "Not sure"]
         )
 
-        if home_suitable == "Yes":
-            has_clean_space = st.checkbox("I have a clean, dust-free space")
-            has_storage = st.checkbox("I have storage space for supplies")
+        # Utilities cost for PD
+        utilities_cost = st.number_input(
+            "Monthly utilities cost (water, electricity) (THB)",
+            min_value=0,
+            value=0,
+            step=100
+        )
 
         # Travel information
         st.subheader("Travel Information")
@@ -76,61 +90,79 @@ if not st.session_state.show_results:
             step=10
         )
 
-        transport_mode = st.selectbox(
-            "How will you travel to the center?",
-            ["Personal vehicle", "Public transport", "Taxi", "Ambulance"]
+        food_cost = st.number_input(
+            "Food and refreshments cost per visit (THB)",
+            min_value=0,
+            value=0,
+            step=10
         )
 
         # Submit button
         submitted = st.form_submit_button("Calculate Costs")
 
         if submitted:
-            # Calculate basic costs
-            visits_per_month = 13  # Assuming 13 visits per month
-
             # Base costs
-            hd_cost = 30000  # Base Hemodialysis cost
-            pd_cost = 25000  # Base Peritoneal Dialysis cost
-            palliative_cost = 15000  # Base Palliative care cost
-
-            # Add travel costs for HD
-            if transport_mode == "Ambulance":
-                travel_cost = max(travel_cost, 1000)  # Minimum ambulance cost
-            hd_cost += (travel_cost * visits_per_month)
-
-            # Add care costs
-            if care_needs == "Need assistance with travel only":
-                care_cost = 5000
-                hd_cost += care_cost
-                pd_cost += care_cost * 0.5  # Less travel needed for PD
-                palliative_cost += care_cost
-            elif care_needs == "Need daily assistance":
-                care_cost = 15000
-                hd_cost += care_cost
-                pd_cost += care_cost
-                palliative_cost += care_cost
-
-            # Adjust PD cost based on home suitability
-            if home_suitable == "No":
-                pd_cost += 5000  # Additional cost for home modifications
-
-            # Store monthly costs
-            monthly_costs = {
-                'hd': hd_cost,
-                'pd': pd_cost,
-                'palliative': palliative_cost
+            base_costs = {
+                'apd': 30000,    # Base APD cost
+                'capd': 25000,   # Base CAPD cost
+                'hd': 30000      # Base HD cost
             }
+
+            # Calculate detailed costs
+            detailed_costs = {
+                'apd': {
+                    'accounting': {
+                        'base_cost': base_costs['apd'],
+                        'utilities': utilities_cost,
+                        'caregiver': 0 if care_needs == "No assistance needed" else 15000
+                    },
+                    'opportunity': {
+                        'caregiver_lost_income': 0 if care_needs == "No assistance needed" else (caregiver_income * 0.1),
+                        'patient_lost_income': monthly_income * 0.1 if employment == "Yes" else 0
+                    }
+                },
+                'capd': {
+                    'accounting': {
+                        'base_cost': base_costs['capd'],
+                        'caregiver': 0 if care_needs == "No assistance needed" else 15000
+                    },
+                    'opportunity': {
+                        'caregiver_lost_income': 0 if care_needs == "No assistance needed" else (caregiver_income * 0.15),
+                        'patient_lost_income': monthly_income * 0.15 if employment == "Yes" else 0
+                    }
+                },
+                'hd': {
+                    'accounting': {
+                        'base_cost': base_costs['hd'],
+                        'travel': travel_cost * 13,  # 13 visits per month
+                        'caregiver': 0 if care_needs == "No assistance needed" else 15000,
+                        'food': food_cost * 13  # 13 visits per month
+                    },
+                    'opportunity': {
+                        'caregiver_lost_income': 0 if care_needs == "No assistance needed" else (caregiver_income * 0.3),
+                        'patient_lost_income': monthly_income * 0.3 if employment == "Yes" else 0
+                    }
+                }
+            }
+
+            # Calculate totals
+            monthly_totals = {}
+            for treatment in detailed_costs:
+                accounting = sum(detailed_costs[treatment]['accounting'].values())
+                opportunity = sum(detailed_costs[treatment]['opportunity'].values())
+                monthly_totals[treatment] = accounting + opportunity
 
             # Calculate yearly projections (including 3% annual increase)
             yearly_costs = {}
-            for treatment, monthly_cost in monthly_costs.items():
+            for treatment, monthly_cost in monthly_totals.items():
                 yearly_costs[treatment] = {
                     '1_year': monthly_cost * 12,
                     '5_years': sum([monthly_cost * 12 * (1.03 ** year) for year in range(5)]),
                     '10_years': sum([monthly_cost * 12 * (1.03 ** year) for year in range(10)])
                 }
 
-            st.session_state.costs = monthly_costs
+            st.session_state.detailed_costs = detailed_costs
+            st.session_state.monthly_totals = monthly_totals
             st.session_state.yearly_costs = yearly_costs
             st.session_state.show_results = True
             st.rerun()
@@ -139,50 +171,62 @@ if not st.session_state.show_results:
 if st.session_state.show_results:
     st.header("Treatment Cost Comparison")
 
-    # Monthly costs
-    st.subheader("Monthly Costs")
+    # Monthly costs summary
+    st.subheader("Monthly Costs Overview")
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.subheader("Hemodialysis (HD)")
-        st.markdown(f"Monthly Cost: ฿{st.session_state.costs['hd']:,.2f}")
-        st.markdown("- Regular hospital visits")
-        st.markdown("- Professional supervision")
+        st.metric("Automated PD (APD)", f"฿{st.session_state.monthly_totals['apd']:,.2f}")
+        with st.expander("See detailed breakdown"):
+            st.markdown("### Accounting Costs")
+            for key, value in st.session_state.detailed_costs['apd']['accounting'].items():
+                st.markdown(f"- {key.replace('_', ' ').title()}: ฿{value:,.2f}")
+            st.markdown("### Opportunity Costs")
+            for key, value in st.session_state.detailed_costs['apd']['opportunity'].items():
+                st.markdown(f"- {key.replace('_', ' ').title()}: ฿{value:,.2f}")
 
     with col2:
-        st.subheader("Peritoneal Dialysis (PD)")
-        st.markdown(f"Monthly Cost: ฿{st.session_state.costs['pd']:,.2f}")
-        st.markdown("- Home-based treatment")
-        st.markdown("- More flexibility")
+        st.metric("Continuous APD (CAPD)", f"฿{st.session_state.monthly_totals['capd']:,.2f}")
+        with st.expander("See detailed breakdown"):
+            st.markdown("### Accounting Costs")
+            for key, value in st.session_state.detailed_costs['capd']['accounting'].items():
+                st.markdown(f"- {key.replace('_', ' ').title()}: ฿{value:,.2f}")
+            st.markdown("### Opportunity Costs")
+            for key, value in st.session_state.detailed_costs['capd']['opportunity'].items():
+                st.markdown(f"- {key.replace('_', ' ').title()}: ฿{value:,.2f}")
 
     with col3:
-        st.subheader("Palliative Care")
-        st.markdown(f"Monthly Cost: ฿{st.session_state.costs['palliative']:,.2f}")
-        st.markdown("- Comfort-focused care")
-        st.markdown("- Less invasive")
+        st.metric("Hemodialysis (HD)", f"฿{st.session_state.monthly_totals['hd']:,.2f}")
+        with st.expander("See detailed breakdown"):
+            st.markdown("### Accounting Costs")
+            for key, value in st.session_state.detailed_costs['hd']['accounting'].items():
+                st.markdown(f"- {key.replace('_', ' ').title()}: ฿{value:,.2f}")
+            st.markdown("### Opportunity Costs")
+            for key, value in st.session_state.detailed_costs['hd']['opportunity'].items():
+                st.markdown(f"- {key.replace('_', ' ').title()}: ฿{value:,.2f}")
 
-    # Yearly projections
-    st.subheader("Cost Projections")
-    projections_df = pd.DataFrame({
-        'Time Period': ['1 Year', '5 Years', '10 Years'],
-        'Hemodialysis (HD)': [
-            f"฿{st.session_state.yearly_costs['hd']['1_year']:,.2f}",
-            f"฿{st.session_state.yearly_costs['hd']['5_years']:,.2f}",
-            f"฿{st.session_state.yearly_costs['hd']['10_years']:,.2f}"
-        ],
-        'Peritoneal Dialysis (PD)': [
-            f"฿{st.session_state.yearly_costs['pd']['1_year']:,.2f}",
-            f"฿{st.session_state.yearly_costs['pd']['5_years']:,.2f}",
-            f"฿{st.session_state.yearly_costs['pd']['10_years']:,.2f}"
-        ],
-        'Palliative Care': [
-            f"฿{st.session_state.yearly_costs['palliative']['1_year']:,.2f}",
-            f"฿{st.session_state.yearly_costs['palliative']['5_years']:,.2f}",
-            f"฿{st.session_state.yearly_costs['palliative']['10_years']:,.2f}"
-        ]
-    })
-
-    st.table(projections_df)
+    # Long-term projections
+    st.subheader("Long-term Cost Projections")
+    with st.expander("See yearly projections"):
+        projections_df = pd.DataFrame({
+            'Time Period': ['1 Year', '5 Years', '10 Years'],
+            'APD': [
+                f"฿{st.session_state.yearly_costs['apd']['1_year']:,.2f}",
+                f"฿{st.session_state.yearly_costs['apd']['5_years']:,.2f}",
+                f"฿{st.session_state.yearly_costs['apd']['10_years']:,.2f}"
+            ],
+            'CAPD': [
+                f"฿{st.session_state.yearly_costs['capd']['1_year']:,.2f}",
+                f"฿{st.session_state.yearly_costs['capd']['5_years']:,.2f}",
+                f"฿{st.session_state.yearly_costs['capd']['10_years']:,.2f}"
+            ],
+            'HD': [
+                f"฿{st.session_state.yearly_costs['hd']['1_year']:,.2f}",
+                f"฿{st.session_state.yearly_costs['hd']['5_years']:,.2f}",
+                f"฿{st.session_state.yearly_costs['hd']['10_years']:,.2f}"
+            ]
+        })
+        st.table(projections_df)
 
     if st.button("Start Over"):
         st.session_state.show_results = False
