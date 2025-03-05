@@ -1,7 +1,4 @@
 import streamlit as st
-from components.questions import QuestionFlow
-from components.comparison import TreatmentComparison
-import base64
 
 # Page configuration
 st.set_page_config(
@@ -10,55 +7,100 @@ st.set_page_config(
     layout="wide"
 )
 
-# Load custom CSS
-def load_css():
-    with open("assets/style.css") as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+# Initialize session state
+if 'show_results' not in st.session_state:
+    st.session_state.show_results = False
 
-def initialize_session_state():
-    if 'current_step' not in st.session_state:
-        st.session_state.current_step = 0
-    if 'answers' not in st.session_state:
-        st.session_state.answers = {}
-    if 'show_comparison' not in st.session_state:
-        st.session_state.show_comparison = False
+# Title
+st.title("Kidney Dialysis Cost Calculator")
+st.markdown("Calculate and compare treatment costs based on your situation")
 
-    # Initialize all possible form field keys
-    default_keys = [
-        'employment', 'work_impact', 'income', 'caregiver_needs',
-        'caregiver_name', 'caregiver_income', 'caregiver_payment',
-        'home_suitable', 'clean_corner', 'has_sink', 'home_score',
-        'knows_travel_cost', 'travel_cost', 'distance', 'transport_mode'
-    ]
+# Only show form if not showing results
+if not st.session_state.show_results:
+    with st.form("cost_calculator"):
+        # Basic information
+        st.subheader("Basic Information")
+        employment = st.radio("Are you currently working?", ["Yes", "No"])
 
-    for key in default_keys:
-        if key not in st.session_state:
-            st.session_state[key] = None
+        monthly_income = st.number_input(
+            "Monthly income (THB)",
+            min_value=0,
+            value=0,
+            step=1000
+        )
 
-def main():
-    load_css()
-    initialize_session_state()
+        # Care needs
+        st.subheader("Care Requirements")
+        care_needs = st.radio(
+            "Do you require assistance?",
+            [
+                "No assistance needed",
+                "Need assistance with travel only",
+                "Need daily assistance"
+            ]
+        )
 
-    # Header
-    st.title("Kidney Dialysis Cost Calculator")
-    st.markdown("Calculate and compare treatment costs based on your situation")
+        # Travel information
+        st.subheader("Travel Information")
+        travel_cost = st.number_input(
+            "Cost per visit to dialysis center (THB)",
+            min_value=0,
+            value=0,
+            step=10
+        )
 
-    # Progress bar
-    if not st.session_state.show_comparison:
-        progress = st.session_state.current_step / 10  # Adjust denominator based on total steps
-        st.progress(progress)
+        # Submit button
+        submitted = st.form_submit_button("Calculate Costs")
 
-    # Main content
-    if not st.session_state.show_comparison:
-        question_flow = QuestionFlow()
-        question_flow.show_question()
-    else:
-        comparison = TreatmentComparison()
-        comparison.show_comparison()
+        if submitted:
+            # Calculate basic costs
+            visits_per_month = 13  # Assuming 13 visits per month
 
-    # Footer
-    st.markdown("---")
-    st.markdown("For medical assistance, please consult with healthcare professionals.")
+            # Calculate costs
+            hd_cost = 30000 + (travel_cost * visits_per_month)  # Base cost + travel
+            pd_cost = 25000  # Base cost for PD
+            palliative_cost = 15000  # Base cost for palliative
 
-if __name__ == "__main__":
-    main()
+            # Add care costs if needed
+            if care_needs != "No assistance needed":
+                care_cost = 5000 if care_needs == "Need assistance with travel only" else 15000
+                hd_cost += care_cost
+                pd_cost += care_cost
+                palliative_cost += care_cost
+
+            # Store results
+            st.session_state.costs = {
+                'hd': hd_cost,
+                'pd': pd_cost,
+                'palliative': palliative_cost
+            }
+            st.session_state.show_results = True
+            st.rerun()
+
+# Show results if calculation is done
+if st.session_state.show_results:
+    st.header("Treatment Cost Comparison")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.subheader("Hemodialysis (HD)")
+        st.markdown(f"Monthly Cost: ฿{st.session_state.costs['hd']:,.2f}")
+        st.markdown("- Regular hospital visits")
+        st.markdown("- Professional supervision")
+
+    with col2:
+        st.subheader("Peritoneal Dialysis (PD)")
+        st.markdown(f"Monthly Cost: ฿{st.session_state.costs['pd']:,.2f}")
+        st.markdown("- Home-based treatment")
+        st.markdown("- More flexibility")
+
+    with col3:
+        st.subheader("Palliative Care")
+        st.markdown(f"Monthly Cost: ฿{st.session_state.costs['palliative']:,.2f}")
+        st.markdown("- Comfort-focused care")
+        st.markdown("- Less invasive")
+
+    if st.button("Start Over"):
+        st.session_state.show_results = False
+        st.rerun()
