@@ -99,7 +99,7 @@ class QuestionFlow:
             options=["Yes", "No"],
             key="home_suitable"
         )
-        
+
         if suitable == "Yes":
             st.checkbox("There is a clean, dust-free corner", key="clean_corner")
             st.checkbox("There is a sink for handwashing", key="has_sink")
@@ -119,7 +119,7 @@ class QuestionFlow:
             options=["Yes", "No"],
             key="knows_travel_cost"
         )
-        
+
         if knows_cost == "Yes":
             st.number_input(
                 "Cost per visit (THB)",
@@ -131,16 +131,16 @@ class QuestionFlow:
 
     def _location_details(self):
         st.subheader("Location Details")
-        
+
         # Create a folium map centered on Thailand
         m = folium.Map(location=[13.7563, 100.5018], zoom_start=6)
-        
+
         st.write("Select your home location:")
         folium_static(m)
-        
+
         st.write("Select dialysis center location:")
         folium_static(m)
-        
+
         # For demo purposes, we'll use text inputs
         st.number_input(
             "Distance to center (km)",
@@ -163,4 +163,4 @@ class QuestionFlow:
         if st.button("Next"):
             st.session_state.answers[key] = st.session_state[key]
             st.session_state.current_step += 1
-            st.experimental_rerun()
+            st.rerun()
