@@ -1,0 +1,60 @@
+/* Main theme colors */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --background-color: #ffffff;
+    --text-color: #2c3e50;
+}
+
+/* Typography */
+h1, h2, h3 {
+    color: var(--text-color);
+    font-family: 'Helvetica Neue', sans-serif;
+}
+
+/* Custom Streamlit elements */
+.stButton > button {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-weight: bold;
+}
+
+.stProgress > div > div {
+    background-color: var(--secondary-color);
+}
+
+/* Form elements */
+.stRadio > div {
+    background-color: var(--background-color);
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+.stNumberInput > div > div > input {
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+}
+
+/* Accessibility improvements */
+button:focus {
+    outline: 3px solid var(--primary-color);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .stButton > button {
+        width: 100%;
+    }
+}
+
+/* Treatment comparison cards */
+.element-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 10px 0;
+}
