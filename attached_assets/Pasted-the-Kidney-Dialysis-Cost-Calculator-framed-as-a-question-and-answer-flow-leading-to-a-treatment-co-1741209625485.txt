@@ -1,0 +1,61 @@
+the Kidney Dialysis Cost Calculator, framed as a question-and-answer flow, leading to a treatment comparison. This is more a description of how the app works rather than a prompt:
+
+The app presents a series of questions to the user, capturing information critical for cost estimation and treatment suitability. After each response, the app advances to the next relevant question.
+
+Question Flow:
+
+Are you currently working? (Yes / No) [Stores answer]
+
+If you start dialysis, will it affect your ability to work? [Conditional display based on #1] (Leads to one of these options):
+
+I will have to leave my job entirely. (Yes / No) [Stores answer]
+
+I will be able to work, just not during dialysis. (Yes / No) [Stores answer]
+
+Dialysis will not affect how much I get paid for on my job. (Yes / No) [Stores answer]
+
+Please enter your monthly income (THB): [Stores answer]
+
+Do you require the assistance of a caregiver? [Stores answer. Options: I am able to help myself in all daily life routines at home and can travel outside alone; I am able to help myself in all daily life routines at home but require assistance to travel outside; I require assistance to complete my daily life routines.]
+
+[Conditional Display Based on #4: If caregiver required] Who will your caretaker be? [Text Input Field]
+
+[Conditional Display Based on #4: If caregiver required] What is their monthly income? (THB) [Stores answer]
+
+[Conditional Display Based on #4: If caregiver required] How much would you have to pay them per month? (THB) [Stores answer]
+
+Is the state of your home suitable for peritoneal dialysis (PD)? [Yes/No. Triggers further questions if Yes, otherwise skips to Travel Cost questions]
+
+(If Yes) There is a clean, dust-free corner. (Yes/No) [Stores Answer]
+
+(If Yes) There is a sink for handwashing. (Yes/No) [Stores Answer]
+
+(If Yes) Home condition score: [Slider/Rating Scale] [Stores Answer]
+
+Do you know how much it costs for you to travel to your nearest dialysis center? [Yes / No]
+
+How much does it cost to travel to and from your center per visit? (THB) [Stores answer. Conditional on #9 being "Yes"]
+
+Do you know which center you plan to go to? (Yes/No) [Stores Answer]
+
+If Yes: How far is the center from your house? Please state your answer in km. [Stores Answer]
+
+Map center location (searchable map) [Allows user to select location. Used if #11 is "No" or used to confirm distance in #12]
+
+Map home location (searchable map) [Allows user to select location. If user provided center in #13, use that location and calculate the distance between home and dialysis center]
+
+Calculated Distance (km): [Displays Calculated Distance (Read-only)]
+
+How do you plan to travel there? [Dropdown: Car, Public Transportation, Taxi, Ambulance] [Stores answer]
+
+Outcome:
+
+After the user completes all relevant questions (dependent on branching logic), the app presents a Treatment Comparison Dashboard. This dashboard displays:
+
+Side-by-side cost comparisons for Hemodialysis (HD), Peritoneal Dialysis (PD), and Palliative Care (if applicable).
+
+Takes into account answers to all the questions asked above, like home suitability, caregiver costs, travel costs.
+
+Includes non-monetary factors: time commitment, lifestyle impact, required support system, pros & cons, and quality of life factors.
+
+Presents actionable results: Printable summary, a shareable report for healthcare providers, a checklist of next steps, relevant resource links, financial planning suggestions, and contact information for support services. The goal is to empower the user to make an informed decision based on their individual circumstances.
