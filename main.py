@@ -57,7 +57,7 @@ if not st.session_state.show_results:
         insurance = st.radio(
             t['insurance_type'],
             options=[
-                t['insurance_options']['gold_card'],
+                t.get('insurance_options', {}).get('gold_card', 'Universal Coverage Scheme'),
                 t['insurance_options']['civil_servant'],
                 t['insurance_options']['social_security'],
                 t['insurance_options']['private_insurance'],
