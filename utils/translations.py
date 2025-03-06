@@ -3,6 +3,7 @@ TRANSLATIONS = {
         'title': 'คำนวณค่าใช้จ่ายการฟอกไต',
         'subtitle': 'ช่วยคุณคำนวณค่าใช้จ่ายในการรักษาโรคไต',
         'basic_info': 'ข้อมูลเบื้องต้น',
+        'cost_comparison': 'เปรียบเทียบค่าใช้จ่าย',
         'insurance_type': 'คุณใช้สิทธิ์การรักษาแบบใดในการรักษาโรคไต?',
         'insurance_options': {
             'gold_card': 'บัตรทอง (หลักประกันสุขภาพแห่งชาติ - 30 บาท)',
@@ -81,6 +82,7 @@ TRANSLATIONS = {
         'title': 'Kidney Dialysis Cost Calculator',
         'subtitle': 'Calculate your dialysis treatment costs',
         'basic_info': 'Basic Information',
+        'cost_comparison': 'Cost Comparison',
         'insurance_type': 'What type of healthcare coverage do you have?',
         'insurance_options': {
             'gold_card': 'Universal Coverage (30 Baht Scheme)',
