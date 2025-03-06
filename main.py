@@ -11,25 +11,51 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for better mobile experience
-st.markdown("""
+# Import custom CSS
+with open('assets/style.css', 'r') as f:
+    css = f.read()
+    
+st.markdown(f"""
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
     <style>
-    .block-container {
+    {css}
+    
+    .header-container {{
+        text-align: center;
+        padding: 1.5rem 0;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+        border-radius: var(--border-radius);
+        color: white;
+    }}
+    
+    .header-container h1 {{
+        color: white;
+        margin-bottom: 0.5rem;
+    }}
+    
+    .header-subtitle {{
+        opacity: 0.9;
+        font-weight: 300;
+        font-size: 1.1rem;
+    }}
+    
+    .section-header {{
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: var(--border-radius);
+        margin: 1.5rem 0 1rem 0;
+        font-weight: 500;
+    }}
+    
+    .footer {{
+        margin-top: 2rem;
         padding-top: 1rem;
-        padding-bottom: 1rem;
-    }
-    .stButton > button {
-        width: 100%;
-        margin: 1rem 0;
-    }
-    @media (max-width: 640px) {
-        .main > div {
-            padding: 1rem 0.5rem;
-        }
-        .stMarkdown p {
-            font-size: 0.9rem;
-        }
-    }
+        border-top: 1px solid rgba(0,0,0,0.1);
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }}
     </style>
 """, unsafe_allow_html=True)
 
@@ -46,14 +72,18 @@ st.session_state.language = 'th' if language == 'ไทย' else 'en'
 # Get translations
 t = TRANSLATIONS[st.session_state.language]
 
-# Title
-st.title(t['title'])
-st.markdown(t['subtitle'])
+# Title with custom container
+st.markdown(f"""
+<div class="header-container">
+    <h1>{t['title']}</h1>
+    <p class="header-subtitle">{t['subtitle']}</p>
+</div>
+""", unsafe_allow_html=True)
 
 if not st.session_state.show_results:
     with st.form("cost_calculator"):
         # Insurance type
-        st.subheader(t['insurance_type'])
+        st.markdown(f'<div class="section-header">{t["insurance_type"]}</div>', unsafe_allow_html=True)
         insurance = st.radio(
             t['insurance_type'],
             options=[
@@ -66,7 +96,7 @@ if not st.session_state.show_results:
         )
 
         # Basic Information
-        st.subheader(t['basic_info'])
+        st.markdown(f'<div class="section-header">{t["basic_info"]}</div>', unsafe_allow_html=True)
         employment = st.radio(t['employment'], [t['yes'], t['no']])
 
         if employment == t['yes']:
@@ -82,7 +112,7 @@ if not st.session_state.show_results:
             )
 
         # Caregiver needs
-        st.subheader(t['caregiver_needs'])
+        st.markdown(f'<div class="section-header">{t["caregiver_needs"]}</div>', unsafe_allow_html=True)
         caregiver_type = st.radio(
             t['caregiver_type'],
             [t['family_caregiver'], t['hired_caregiver'], t['no_caregiver']]
@@ -97,21 +127,21 @@ if not st.session_state.show_results:
             )
 
         # Home Assessment
-        st.subheader(t['home_assessment'])
+        st.markdown(f'<div class="section-header">{t["home_assessment"]}</div>', unsafe_allow_html=True)
         home_clean = st.checkbox(t['home_questions']['cleanliness'])
         home_sink = st.checkbox(t['home_questions']['sink'])
         home_space = st.checkbox(t['home_questions']['space'])
         home_private = st.checkbox(t['home_questions']['crowding'])
 
         # Treatment Frequency
-        st.subheader(t['treatment_frequency'])
+        st.markdown(f'<div class="section-header">{t["treatment_frequency"]}</div>', unsafe_allow_html=True)
         hd_frequency = st.radio(
             t['hd_frequency'],
             [t['freq_2'], t['freq_3']]
         )
 
         # Travel Information
-        st.subheader(t['travel_info'])
+        st.markdown(f'<div class="section-header">{t["travel_info"]}</div>', unsafe_allow_html=True)
         distance = st.number_input(
             t['distance'],
             min_value=0,
@@ -206,45 +236,142 @@ if not st.session_state.show_results:
 if st.session_state.show_results:
     st.header(t['cost_comparison'])
 
-    # Monthly costs bar chart
+    # Monthly costs bar chart with improved styling
     fig = go.Figure(data=[
         go.Bar(
             x=[t['treatment_types'][k] for k in ['hd', 'pd', 'apd', 'ccc']],
             y=[st.session_state.monthly_totals[k] for k in ['hd', 'pd', 'apd', 'ccc']],
             text=[f"฿{cost:,.0f}" for cost in [st.session_state.monthly_totals[k] for k in ['hd', 'pd', 'apd', 'ccc']]],
             textposition='auto',
+            marker_color=['#1976d2', '#26a69a', '#7986cb', '#9575cd'],
+            hoverinfo='y+name',
         )
     ])
 
     fig.update_layout(
-        title=t['monthly_overview'],
+        title={
+            'text': t['monthly_overview'],
+            'y':0.95,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'font': {'size': 20, 'color': '#2c3e50', 'family': 'Roboto'}
+        },
         yaxis_title='Monthly Cost (THB)',
-        height=400,
-        margin=dict(t=50, b=0, l=0, r=0),
+        height=450,
+        margin=dict(t=70, b=30, l=40, r=40),
         paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0.02)',
+        font={'family': 'Roboto'},
+        xaxis={'tickangle': 0, 'categoryorder': 'total descending'},
+        yaxis={'gridcolor': 'rgba(0,0,0,0.05)'},
+        hoverlabel={'bgcolor': 'white', 'font_size': 14, 'font_family': 'Roboto'},
+        barmode='group'
     )
 
     st.plotly_chart(fig, use_container_width=True)
 
-    # Detailed breakdown for each treatment
-    st.subheader(t['monthly_overview'])
+    # Detailed breakdown for each treatment with enhanced cards
+    st.markdown(f'<div class="section-header">{t["monthly_overview"]}</div>', unsafe_allow_html=True)
     cols = st.columns(4)
+
+    treatment_info = {
+        'hd': {
+            'pros': [t.get('hd_pros', ['Professional supervision', 'Structured schedule', 'No home setup required'])],
+            'cons': [t.get('hd_cons', ['Regular travel required', 'Time commitment', 'Higher cost'])]
+        },
+        'pd': {
+            'pros': [t.get('pd_pros', ['Home-based treatment', 'More flexibility', 'Greater independence'])],
+            'cons': [t.get('pd_cons', ['Requires storage space', 'Daily commitment', 'Risk of infection'])]
+        },
+        'apd': {
+            'pros': [t.get('apd_pros', ['Overnight treatment', 'More daytime freedom', 'Less manual procedures'])],
+            'cons': [t.get('apd_cons', ['Machine needed', 'Higher utility costs', 'Technical complexity'])]
+        },
+        'ccc': {
+            'pros': [t.get('ccc_pros', ['Comfort-focused', 'Less invasive', 'Lower cost'])],
+            'cons': [t.get('ccc_cons', ['Limited treatment', 'Requires support system', 'Progressive symptoms'])]
+        }
+    }
 
     for i, (treatment, label) in enumerate([
         ('hd', 'HD'), ('pd', 'PD'), ('apd', 'APD'), ('ccc', 'CCC')
     ]):
         with cols[i]:
-            st.metric(t['treatment_types'][treatment], 
-                     f"฿{st.session_state.monthly_totals[treatment]:,.2f}")
+            st.markdown(f"""
+            <div class="treatment-card">
+                <h3>{t['treatment_types'][treatment]}</h3>
+                <div class="cost-metric">฿{st.session_state.monthly_totals[treatment]:,.0f}</div>
+                <div class="pros-cons">
+                    <h4>✓ {t.get('pros', 'Pros')}</h4>
+                    <ul class="pros">
+                        {''.join([f'<li>{item}</li>' for item in treatment_info[treatment]['pros'][0]])}
+                    </ul>
+                    <h4>✗ {t.get('cons', 'Cons')}</h4>
+                    <ul class="cons">
+                        {''.join([f'<li>{item}</li>' for item in treatment_info[treatment]['cons'][0]])}
+                    </ul>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
             with st.expander(t['see_details']):
                 for item, cost in st.session_state.detailed_costs[treatment].items():
                     if cost > 0:
-                        st.markdown(f"- {item}: ฿{cost:,.2f}")
+                        st.markdown(f"- **{item}**: ฿{cost:,.2f}")
 
-    # Yearly projections
-    st.subheader(t['yearly_projections'])
-    with st.expander(t['yearly_projections']):
+    # Yearly projections with enhanced visuals
+    st.markdown(f'<div class="section-header">{t["yearly_projections"]}</div>', unsafe_allow_html=True)
+    
+    # Create a line chart for yearly projections
+    years = [1, 5, 10]
+    fig = go.Figure()
+    
+    treatments = ['hd', 'pd', 'apd', 'ccc']
+    colors = ['#1976d2', '#26a69a', '#7986cb', '#9575cd']
+    
+    for i, treatment in enumerate(treatments):
+        values = [st.session_state.yearly_costs[treatment][k] for k in ['1_year', '5_years', '10_years']]
+        fig.add_trace(go.Scatter(
+            x=years, 
+            y=values,
+            mode='lines+markers',
+            name=t['treatment_types'][treatment],
+            line=dict(color=colors[i], width=3),
+            marker=dict(size=10)
+        ))
+    
+    fig.update_layout(
+        title={
+            'text': t['yearly_projections'],
+            'y':0.95,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'font': {'size': 18, 'color': '#2c3e50', 'family': 'Roboto'}
+        },
+        xaxis_title='Years',
+        yaxis_title='Cumulative Cost (THB)',
+        height=450,
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="center",
+            x=0.5
+        ),
+        margin=dict(t=70, b=30, l=40, r=40),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0.02)',
+        font={'family': 'Roboto'},
+        xaxis={'tickvals': years, 'gridcolor': 'rgba(0,0,0,0.05)'},
+        yaxis={'gridcolor': 'rgba(0,0,0,0.05)'},
+        hoverlabel={'bgcolor': 'white', 'font_size': 14, 'font_family': 'Roboto'}
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+    
+    with st.expander(t['see_details']):
         projections_df = pd.DataFrame({
             'Time Period': ['1 Year', '5 Years', '10 Years'],
             'HD': [f"฿{st.session_state.yearly_costs['hd'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']],
@@ -258,9 +385,19 @@ if st.session_state.show_results:
         st.session_state.show_results = False
         st.rerun()
 
-    # Footer notes
-    st.markdown("---")
-    st.markdown(f"**{t['notes']}:**")
-    st.markdown(t['costs_may_vary'])
-    st.markdown(t['insurance_note'])
-    st.markdown(t['consult_note'])
+    # Enhanced footer notes
+    st.markdown("""
+    <div class="footer">
+        <h4>📝 Notes</h4>
+        <ul>
+    """, unsafe_allow_html=True)
+    st.markdown(f"<li>{t['costs_may_vary']}</li>", unsafe_allow_html=True)
+    st.markdown(f"<li>{t['insurance_note']}</li>", unsafe_allow_html=True)
+    st.markdown(f"<li>{t['consult_note']}</li>", unsafe_allow_html=True)
+    st.markdown("""
+        </ul>
+        <p style="text-align: center; margin-top: 20px;">
+            © 2025 Kidney Dialysis Cost Calculator | Developed with ❤️ by Replit
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
