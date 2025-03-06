@@ -29,6 +29,7 @@ class QuestionFlow:
 
     def _employment_status(self):
         st.subheader("Employment Status")
+        st.info("Your employment status helps us estimate how dialysis treatment might affect your income.")
         employment = st.radio(
             "Are you currently working?",
             options=["Yes", "No"],
@@ -39,6 +40,7 @@ class QuestionFlow:
     def _work_impact(self):
         if st.session_state.answers.get("employment") == "Yes":
             st.subheader("Impact on Work")
+            st.info("Hemodialysis typically requires 3-4 hours per session, 2-3 times per week. Peritoneal dialysis can be done at home with more flexible scheduling.")
             impact = st.radio(
                 "If you start dialysis, how will it affect your ability to work?",
                 options=[
@@ -52,17 +54,44 @@ class QuestionFlow:
 
     def _income(self):
         st.subheader("Monthly Income")
-        income = st.number_input(
-            "Please enter your monthly income (THB):",
-            min_value=0,
-            value=0,
-            step=1000,
-            key="income"
+        
+        # Add explanatory note
+        st.info("This information helps us calculate potential income loss due to treatment. All data remains private.")
+        
+        income_type = st.radio(
+            "How do you receive your income?",
+            options=["Monthly salary", "Lump sum payments", "No income"],
+            key="income_type"
         )
+        
+        if income_type == "Monthly salary":
+            income = st.number_input(
+                "Please enter your monthly income (THB):",
+                min_value=0,
+                value=0,
+                step=1000,
+                key="income"
+            )
+        elif income_type == "Lump sum payments":
+            annual_income = st.number_input(
+                "Please enter your annual income (THB):",
+                min_value=0,
+                value=0,
+                step=10000,
+                key="annual_income"
+            )
+            # Convert lump sum to monthly equivalent
+            if "annual_income" in st.session_state:
+                st.session_state.income = st.session_state.annual_income / 12
+                st.info(f"Your estimated monthly income: ฿{st.session_state.income:,.2f}")
+        else:
+            st.session_state.income = 0
+            
         self._next_button("income")
 
     def _caregiver_needs(self):
         st.subheader("Caregiver Requirements")
+        st.info("Different treatments require different levels of assistance. This helps us estimate potential caregiver costs.")
         needs = st.radio(
             "Do you require the assistance of a caregiver?",
             options=[
@@ -114,6 +143,7 @@ class QuestionFlow:
 
     def _home_suitability(self):
         st.subheader("Home Suitability for PD")
+        st.info("Peritoneal dialysis (PD) requires a clean environment and basic amenities at home. This helps determine if your home is suitable for PD treatment.")
         suitable = st.radio(
             "Is your home suitable for peritoneal dialysis (PD)?",
             options=["Yes", "No"],
@@ -121,19 +151,21 @@ class QuestionFlow:
         )
 
         if suitable == "Yes":
-            st.checkbox("There is a clean, dust-free corner", key="clean_corner")
-            st.checkbox("There is a sink for handwashing", key="has_sink")
+            st.checkbox("There is a clean, dust-free corner", key="clean_corner", help="PD requires a clean area to reduce infection risk")
+            st.checkbox("There is a sink for handwashing", key="has_sink", help="Proper hand hygiene is essential for PD")
             st.slider(
                 "Home condition score",
                 min_value=1,
                 max_value=10,
                 value=5,
-                key="home_score"
+                key="home_score",
+                help="1 = Poor conditions, 10 = Excellent conditions"
             )
         self._next_button("home_suitability")
 
     def _travel_costs(self):
         st.subheader("Travel Costs")
+        st.info("Hemodialysis typically requires 2-3 trips to a dialysis center per week. Travel costs can be significant over time.")
         knows_cost = st.radio(
             "Do you know how much it costs to travel to your nearest dialysis center?",
             options=["Yes", "No"],
@@ -145,8 +177,11 @@ class QuestionFlow:
                 "Cost per visit (THB)",
                 min_value=0,
                 step=10,
-                key="travel_cost"
+                key="travel_cost",
+                help="Include round-trip costs (e.g., gas, taxi, public transport)"
             )
+        else:
+            st.info("We'll estimate travel costs based on your location information in the next step.")
         self._next_button("travel_costs")
 
     def _location_details(self):

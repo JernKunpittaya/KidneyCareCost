@@ -20,10 +20,16 @@ def calculate_costs(answers):
     
     # Calculate lost income
     lost_income = 0
+    monthly_income = float(answers.get('income', 0))
+    
+    # Check if income was entered as lump sum and converted to monthly
+    if answers.get('income_type') == "Lump sum payments" and 'annual_income' in answers:
+        monthly_income = float(answers.get('annual_income', 0)) / 12
+    
     if answers.get('work_impact') == "I will have to leave my job entirely":
-        lost_income = float(answers.get('income', 0))
+        lost_income = monthly_income
     elif answers.get('work_impact') == "I will be able to work, just not during dialysis":
-        lost_income = float(answers.get('income', 0)) * 0.3  # Assuming 30% income loss
+        lost_income = monthly_income * 0.3  # Assuming 30% income loss
     
     # Calculate final costs
     costs = {
