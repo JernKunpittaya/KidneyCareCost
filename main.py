@@ -8,7 +8,7 @@ st.set_page_config(
     page_title="Kidney Dialysis Cost Calculator",
     page_icon="💉",
     layout="wide",
-    initial_sidebar_state="collapsed"  # Better for mobile
+    initial_sidebar_state="collapsed"
 )
 
 # Custom CSS for better mobile experience
@@ -43,59 +43,54 @@ if 'show_results' not in st.session_state:
 language = st.selectbox('🌐 Language / ภาษา', ['ไทย', 'English'])
 st.session_state.language = 'th' if language == 'ไทย' else 'en'
 
-# Get translations for current language
+# Get translations
 t = TRANSLATIONS[st.session_state.language]
 
 # Title
 st.title(t['title'])
 st.markdown(t['subtitle'])
 
-# Only show form if not showing results
 if not st.session_state.show_results:
     with st.form("cost_calculator"):
-        # Basic information
+        # Insurance type
+        st.subheader(t['insurance_type'])
+        insurance = st.radio(
+            t['insurance_type'],
+            options=[
+                t['insurance_options']['gold_card'],
+                t['insurance_options']['civil_servant'],
+                t['insurance_options']['social_security'],
+                t['insurance_options']['private_insurance'],
+                t['insurance_options']['other']
+            ]
+        )
+
+        # Basic Information
         st.subheader(t['basic_info'])
         employment = st.radio(t['employment'], [t['yes'], t['no']])
 
-        # Work impact question (shown only if employed)
-        work_impact = None
         if employment == t['yes']:
             work_impact = st.radio(
                 t['work_impact'],
                 [t['leave_job'], t['work_during_dialysis'], t['no_income_effect']]
             )
+            monthly_income = st.number_input(
+                t['monthly_income'],
+                min_value=0,
+                value=0,
+                step=1000
+            )
 
-        monthly_income = st.number_input(
-            t['monthly_income'],
-            min_value=0,
-            value=0,
-            step=1000
+        # Caregiver needs
+        st.subheader(t['caregiver_needs'])
+        caregiver_type = st.radio(
+            t['caregiver_type'],
+            [t['family_caregiver'], t['hired_caregiver'], t['no_caregiver']]
         )
 
-        # Medical Information
-        st.subheader(t['medical_info'])
-        medical_conditions = st.multiselect(
-            t['select_conditions'],
-            [t['diabetes'], t['hypertension'], t['heart_disease'], t['none']],
-            default=[t['none']]
-        )
-
-        # Care needs
-        st.subheader(t['care_requirements'])
-        care_needs = st.radio(
-            t['assistance_needs'],
-            [
-                t['no_assistance'],
-                t['travel_assistance'],
-                t['daily_assistance']
-            ]
-        )
-
-        # Caregiver details
-        if care_needs != t['no_assistance']:
-            st.subheader(t['caregiver_details'])
-            caregiver_income = st.number_input(
-                t['caregiver_income'],
+        if caregiver_type == t['hired_caregiver']:
+            caregiver_cost = st.number_input(
+                t['caregiver_cost'],
                 min_value=0,
                 value=0,
                 step=1000
@@ -103,19 +98,19 @@ if not st.session_state.show_results:
 
         # Home Assessment
         st.subheader(t['home_assessment'])
-        home_suitable = st.radio(
-            t['pd_suitability'],
-            [t['yes'], t['no']]
+        home_clean = st.checkbox(t['home_questions']['cleanliness'])
+        home_sink = st.checkbox(t['home_questions']['sink'])
+        home_space = st.checkbox(t['home_questions']['space'])
+        home_private = st.checkbox(t['home_questions']['crowding'])
+
+        # Treatment Frequency
+        st.subheader(t['treatment_frequency'])
+        hd_frequency = st.radio(
+            t['hd_frequency'],
+            [t['freq_2'], t['freq_3']]
         )
 
-        utilities_cost = st.number_input(
-            t['utilities_cost'],
-            min_value=0,
-            value=0,
-            step=100
-        )
-
-        # Travel information
+        # Travel Information
         st.subheader(t['travel_info'])
         distance = st.number_input(
             t['distance'],
@@ -138,62 +133,61 @@ if not st.session_state.show_results:
             step=10
         )
 
-        # Submit button
+        # Calculate button
         submitted = st.form_submit_button(t['calculate'])
 
         if submitted:
-            # Calculate income loss based on work impact
-            income_loss_factor = {
-                t['leave_job']: 1.0,  # 100% income loss
-                t['work_during_dialysis']: 0.3,  # 30% income loss
-                t['no_income_effect']: 0.0  # No income loss
+            # Base costs by insurance type (example values, adjust based on actual coverage)
+            coverage_factors = {
+                t['insurance_options']['gold_card']: 0.05,      # 5% of total cost
+                t['insurance_options']['civil_servant']: 0.0,   # 0% of total cost
+                t['insurance_options']['social_security']: 0.1, # 10% of total cost
+                t['insurance_options']['private_insurance']: 0.2, # 20% of total cost
+                t['insurance_options']['other']: 0.3           # 30% of total cost
             }
+
+            coverage_factor = coverage_factors[insurance]
+            visits_per_month = 8 if hd_frequency == t['freq_2'] else 12
 
             # Calculate detailed costs
             detailed_costs = {
-                'apd': {
-                    'accounting': {
-                        'base_cost': 30000,
-                        'utilities': utilities_cost,
-                        'caregiver': 0 if care_needs == t['no_assistance'] else 15000
-                    },
-                    'opportunity': {
-                        'caregiver_lost_income': 0 if care_needs == t['no_assistance'] else (caregiver_income * 0.1),
-                        'patient_lost_income': monthly_income * (income_loss_factor.get(work_impact, 0) if employment == t['yes'] else 0)
-                    }
-                },
-                'capd': {
-                    'accounting': {
-                        'base_cost': 25000,
-                        'caregiver': 0 if care_needs == t['no_assistance'] else 15000
-                    },
-                    'opportunity': {
-                        'caregiver_lost_income': 0 if care_needs == t['no_assistance'] else (caregiver_income * 0.15),
-                        'patient_lost_income': monthly_income * (income_loss_factor.get(work_impact, 0) if employment == t['yes'] else 0)
-                    }
-                },
                 'hd': {
-                    'accounting': {
-                        'base_cost': 30000,
-                        'travel': travel_cost * 13,  # 13 visits per month
-                        'caregiver': 0 if care_needs == t['no_assistance'] else 15000,
-                        'food': food_cost * 13  # 13 visits per month
-                    },
-                    'opportunity': {
-                        'caregiver_lost_income': 0 if care_needs == t['no_assistance'] else (caregiver_income * 0.3),
-                        'patient_lost_income': monthly_income * (income_loss_factor.get(work_impact, 0) if employment == t['yes'] else 0)
-                    }
+                    t['cost_items']['base_cost']: 30000 * coverage_factor,
+                    t['cost_items']['medicine']: 5000 * coverage_factor,
+                    t['cost_items']['travel']: travel_cost * visits_per_month,
+                    t['cost_items']['food']: food_cost * visits_per_month,
+                    t['cost_items']['caregiver']: caregiver_cost if caregiver_type == t['hired_caregiver'] else 0
+                },
+                'pd': {
+                    t['cost_items']['base_cost']: 25000 * coverage_factor,
+                    t['cost_items']['medicine']: 4000 * coverage_factor,
+                    t['cost_items']['equipment']: 3000 * coverage_factor,
+                    t['cost_items']['utilities']: 500,
+                    t['cost_items']['caregiver']: caregiver_cost if caregiver_type == t['hired_caregiver'] else 0,
+                    t['cost_items']['home_modification']: 5000 if not all([home_clean, home_sink, home_space, home_private]) else 0
+                },
+                'apd': {
+                    t['cost_items']['base_cost']: 35000 * coverage_factor,
+                    t['cost_items']['medicine']: 4000 * coverage_factor,
+                    t['cost_items']['equipment']: 5000 * coverage_factor,
+                    t['cost_items']['utilities']: 1000,
+                    t['cost_items']['caregiver']: caregiver_cost if caregiver_type == t['hired_caregiver'] else 0,
+                    t['cost_items']['home_modification']: 5000 if not all([home_clean, home_sink, home_space, home_private]) else 0
+                },
+                'ccc': {
+                    t['cost_items']['base_cost']: 15000 * coverage_factor,
+                    t['cost_items']['medicine']: 3000 * coverage_factor,
+                    t['cost_items']['caregiver']: caregiver_cost if caregiver_type == t['hired_caregiver'] else 0
                 }
             }
 
-            # Calculate totals
-            monthly_totals = {}
-            for treatment in detailed_costs:
-                accounting = sum(detailed_costs[treatment]['accounting'].values())
-                opportunity = sum(detailed_costs[treatment]['opportunity'].values())
-                monthly_totals[treatment] = accounting + opportunity
+            # Calculate monthly totals
+            monthly_totals = {
+                treatment: sum(costs.values())
+                for treatment, costs in detailed_costs.items()
+            }
 
-            # Calculate yearly projections (including 3% annual increase)
+            # Calculate yearly projections
             yearly_costs = {}
             for treatment, monthly_cost in monthly_totals.items():
                 yearly_costs[treatment] = {
@@ -202,26 +196,22 @@ if not st.session_state.show_results:
                     '10_years': sum([monthly_cost * 12 * (1.03 ** year) for year in range(10)])
                 }
 
+            # Store results in session state
             st.session_state.detailed_costs = detailed_costs
             st.session_state.monthly_totals = monthly_totals
             st.session_state.yearly_costs = yearly_costs
             st.session_state.show_results = True
             st.rerun()
 
-# Show results if calculation is done
 if st.session_state.show_results:
     st.header(t['cost_comparison'])
 
-    # Cost comparison bar chart
+    # Monthly costs bar chart
     fig = go.Figure(data=[
         go.Bar(
-            x=['APD', 'CAPD', 'HD'],
-            y=[
-                st.session_state.monthly_totals['apd'],
-                st.session_state.monthly_totals['capd'],
-                st.session_state.monthly_totals['hd']
-            ],
-            text=[f"฿{cost:,.0f}" for cost in st.session_state.monthly_totals.values()],
+            x=[t['treatment_types'][k] for k in ['hd', 'pd', 'apd', 'ccc']],
+            y=[st.session_state.monthly_totals[k] for k in ['hd', 'pd', 'apd', 'ccc']],
+            text=[f"฿{cost:,.0f}" for cost in [st.session_state.monthly_totals[k] for k in ['hd', 'pd', 'apd', 'ccc']]],
             textposition='auto',
         )
     ])
@@ -237,60 +227,30 @@ if st.session_state.show_results:
 
     st.plotly_chart(fig, use_container_width=True)
 
-    # Monthly costs details
+    # Detailed breakdown for each treatment
     st.subheader(t['monthly_overview'])
-    col1, col2, col3 = st.columns(3)
+    cols = st.columns(4)
 
-    with col1:
-        st.metric("APD", f"฿{st.session_state.monthly_totals['apd']:,.2f}")
-        with st.expander(t['see_details']):
-            st.markdown(f"### {t['accounting_costs']}")
-            for key, value in st.session_state.detailed_costs['apd']['accounting'].items():
-                st.markdown(f"- {t[key]}: ฿{value:,.2f}")
-            st.markdown(f"### {t['opportunity_costs']}")
-            for key, value in st.session_state.detailed_costs['apd']['opportunity'].items():
-                st.markdown(f"- {t[key]}: ฿{value:,.2f}")
+    for i, (treatment, label) in enumerate([
+        ('hd', 'HD'), ('pd', 'PD'), ('apd', 'APD'), ('ccc', 'CCC')
+    ]):
+        with cols[i]:
+            st.metric(t['treatment_types'][treatment], 
+                     f"฿{st.session_state.monthly_totals[treatment]:,.2f}")
+            with st.expander(t['see_details']):
+                for item, cost in st.session_state.detailed_costs[treatment].items():
+                    if cost > 0:
+                        st.markdown(f"- {item}: ฿{cost:,.2f}")
 
-    with col2:
-        st.metric("CAPD", f"฿{st.session_state.monthly_totals['capd']:,.2f}")
-        with st.expander(t['see_details']):
-            st.markdown(f"### {t['accounting_costs']}")
-            for key, value in st.session_state.detailed_costs['capd']['accounting'].items():
-                st.markdown(f"- {t[key]}: ฿{value:,.2f}")
-            st.markdown(f"### {t['opportunity_costs']}")
-            for key, value in st.session_state.detailed_costs['capd']['opportunity'].items():
-                st.markdown(f"- {t[key]}: ฿{value:,.2f}")
-
-    with col3:
-        st.metric("HD", f"฿{st.session_state.monthly_totals['hd']:,.2f}")
-        with st.expander(t['see_details']):
-            st.markdown(f"### {t['accounting_costs']}")
-            for key, value in st.session_state.detailed_costs['hd']['accounting'].items():
-                st.markdown(f"- {t[key]}: ฿{value:,.2f}")
-            st.markdown(f"### {t['opportunity_costs']}")
-            for key, value in st.session_state.detailed_costs['hd']['opportunity'].items():
-                st.markdown(f"- {t[key]}: ฿{value:,.2f}")
-
-    # Yearly projections in table format
-    st.subheader(t['long_term_projections'])
+    # Yearly projections
+    st.subheader(t['yearly_projections'])
     with st.expander(t['yearly_projections']):
         projections_df = pd.DataFrame({
             'Time Period': ['1 Year', '5 Years', '10 Years'],
-            'APD': [
-                f"฿{st.session_state.yearly_costs['apd']['1_year']:,.2f}",
-                f"฿{st.session_state.yearly_costs['apd']['5_years']:,.2f}",
-                f"฿{st.session_state.yearly_costs['apd']['10_years']:,.2f}"
-            ],
-            'CAPD': [
-                f"฿{st.session_state.yearly_costs['capd']['1_year']:,.2f}",
-                f"฿{st.session_state.yearly_costs['capd']['5_years']:,.2f}",
-                f"฿{st.session_state.yearly_costs['capd']['10_years']:,.2f}"
-            ],
-            'HD': [
-                f"฿{st.session_state.yearly_costs['hd']['1_year']:,.2f}",
-                f"฿{st.session_state.yearly_costs['hd']['5_years']:,.2f}",
-                f"฿{st.session_state.yearly_costs['hd']['10_years']:,.2f}"
-            ]
+            'HD': [f"฿{st.session_state.yearly_costs['hd'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']],
+            'PD': [f"฿{st.session_state.yearly_costs['pd'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']],
+            'APD': [f"฿{st.session_state.yearly_costs['apd'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']],
+            'CCC': [f"฿{st.session_state.yearly_costs['ccc'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']]
         })
         st.table(projections_df)
 
@@ -298,9 +258,9 @@ if st.session_state.show_results:
         st.session_state.show_results = False
         st.rerun()
 
-    # Footer with notes
+    # Footer notes
     st.markdown("---")
     st.markdown(f"**{t['notes']}:**")
     st.markdown(t['costs_may_vary'])
-    st.markdown(t['inflation_note'])
+    st.markdown(t['insurance_note'])
     st.markdown(t['consult_note'])
