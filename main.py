@@ -114,6 +114,10 @@ if not st.session_state.show_results:
                 t['caregiver_cost'],
                 min_value=0,
 
+        value=0,
+                step=1000
+            )
+            
         # Add help button with FAQs for common user confusions
         with st.expander("❓ Need help with this form?"):
             st.markdown("""
@@ -138,10 +142,6 @@ if not st.session_state.show_results:
             **5. What if I don't know my exact income or costs?**
             - Provide your best estimate - the calculator will still give you useful information
             """)
-
-                value=0,
-                step=1000
-            )
 
         # Home Assessment
         st.subheader(t['home_assessment'])
