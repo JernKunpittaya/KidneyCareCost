@@ -59,6 +59,8 @@ class QuestionFlow:
         # Add detailed explanatory note
         st.info("This information helps us calculate potential income loss due to treatment. Different treatment options may affect your work capacity differently. All financial information remains private and is only used for cost calculation.")
         
+        st.info("💡 **Income Information**: Different income types are handled differently to calculate treatment costs correctly. We need this information to properly estimate potential income loss during treatment.")
+        
         income_type = st.radio(
             "How do you receive your income?",
             options=["Monthly salary", "Lump sum payments", "No income"],
@@ -75,7 +77,16 @@ class QuestionFlow:
                 key="income",
                 help="Enter your typical monthly income before taxes and deductions"
             )
+            if income > 0:
+                st.success(f"✅ Monthly income entered: ฿{income:,.2f}")
         elif income_type == "Lump sum payments":
+            st.markdown("""
+            <div style="background-color: #f0f8ff; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                <p><strong>About Lump Sum Payments:</strong> This includes seasonal work, contract work, freelancing, or annual bonuses.</p>
+                <p>We'll convert your annual income to a monthly equivalent to calculate treatment impacts.</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
             annual_income = st.number_input(
                 "Please enter your annual income (THB):",
                 min_value=0,
@@ -85,10 +96,21 @@ class QuestionFlow:
                 help="Enter your estimated total annual income from all sources"
             )
             # Convert lump sum to monthly equivalent
-            if "annual_income" in st.session_state:
+            if "annual_income" in st.session_state and st.session_state.annual_income > 0:
                 st.session_state.income = st.session_state.annual_income / 12
-                st.info(f"Your estimated monthly income: ฿{st.session_state.income:,.2f} (คำนวณจาก รายได้ต่อปี ÷ 12)")
-                st.warning("**วิธีคำนวณรายได้แบบเหมาจ่าย (Lump sum)**: เราแบ่งรายได้ทั้งปีของคุณด้วย 12 เพื่อประมาณการรายได้ต่อเดือน เพื่อคำนวณผลกระทบด้านการเงินระหว่างการรักษา")
+                st.success(f"✅ Your estimated monthly income: ฿{st.session_state.income:,.2f}")
+                st.info("How we calculate this: Annual income ÷ 12 = Monthly income")
+                
+                # Show bilingual explanation
+                st.markdown("""
+                <div style="background-color: #fff8e1; padding: 10px; border-radius: 5px;">
+                    <p><strong>🇬🇧 Lump Sum Calculation:</strong> We divide your annual income by 12 to estimate monthly income for treatment impact calculations.</p>
+                    <p><strong>🇹🇭 วิธีคำนวณรายได้แบบเหมาจ่าย:</strong> เราแบ่งรายได้ทั้งปีของคุณด้วย 12 เพื่อประมาณการรายได้ต่อเดือน เพื่อคำนวณผลกระทบด้านการเงินระหว่างการรักษา</p>
+                </div>
+                """, unsafe_allow_html=True)
+        else:
+            st.session_state.income = 0
+            st.info("No income selected. We'll calculate costs without considering income loss.")
         else:
             st.session_state.income = 0
             
@@ -182,7 +204,31 @@ class QuestionFlow:
 
     def _travel_costs(self):
         st.subheader("Travel Costs")
-        st.info("Hemodialysis typically requires 2-3 visits per week to a dialysis center. Each visit may involve:\n- Transportation costs (fuel, taxi, public transport)\n- Food expenses during treatment days\n- Potential accommodation costs if the center is far away\n\nThese recurring costs significantly impact your total treatment expenses.")
+        
+        # Improved travel costs explanation with bilingual support
+        st.markdown("""
+        <div style="background-color: #e8f4f8; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+            <h4 style="margin-top: 0;">📍 Travel Cost Impact</h4>
+            <p><strong>Hemodialysis requires 2-3 visits per week</strong> to a dialysis center, which means:</p>
+            <ul>
+                <li>8-13 trips per month</li>
+                <li>Transportation costs (fuel, taxi, public transport)</li>
+                <li>Food expenses during treatment days</li>
+                <li>Potential accommodation costs if the center is far away</li>
+            </ul>
+            <p>These recurring costs significantly impact your total treatment expenses.</p>
+            <hr style="border-top: 1px dashed #ccc; margin: 10px 0;">
+            <p><strong>🇹🇭 การฟอกไตต้องเดินทางไปโรงพยาบาลหรือศูนย์ฟอกไต 2-3 ครั้งต่อสัปดาห์</strong> ซึ่งหมายถึง:</p>
+            <ul>
+                <li>ต้องเดินทาง 8-13 ครั้งต่อเดือน</li>
+                <li>มีค่าเดินทาง (น้ำมัน, แท็กซี่, รถสาธารณะ)</li>
+                <li>ค่าอาหารในวันที่รับการรักษา</li>
+                <li>อาจมีค่าที่พักถ้าศูนย์ฟอกไตอยู่ไกล</li>
+            </ul>
+            <p>ค่าใช้จ่ายเหล่านี้ส่งผลกระทบอย่างมากต่อค่าใช้จ่ายในการรักษาโดยรวม</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
         knows_cost = st.radio(
             "Do you know how much it costs to travel to your nearest dialysis center?",
             options=["Yes", "No"],
@@ -191,15 +237,36 @@ class QuestionFlow:
         )
 
         if knows_cost == "Yes":
-            st.number_input(
+            cost = st.number_input(
                 "Cost per visit (THB)",
                 min_value=0,
                 step=10,
                 key="travel_cost",
                 help="Include round-trip costs (e.g., gas, taxi, public transport)"
             )
+            
+            if cost > 0:
+                # Show multiplication example to help user understand total impact
+                visits_per_month = 13  # Assuming worst case
+                monthly_cost = cost * visits_per_month
+                
+                st.success(f"✅ Cost entered: ฿{cost:,.2f} per visit")
+                st.info(f"📊 Estimated monthly travel cost: ฿{cost:,.2f} × {visits_per_month} visits = ฿{monthly_cost:,.2f}")
         else:
-            st.info("We'll estimate travel costs based on your location information in the next step.")
+            st.info("👉 We'll estimate travel costs based on your location information in the next step.")
+            
+            # Add distance-based cost estimate hint
+            st.markdown("""
+            <div style="background-color: #fff8e1; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                <p><strong>💡 Travel Cost Estimate:</strong> If you're not sure, think about your travel mode:</p>
+                <ul>
+                    <li>Public transport: Typically ฿30-100 per trip</li>
+                    <li>Car: ~฿5-8 per km for fuel + parking</li>
+                    <li>Taxi: ~฿40 base fare + ฿5-8 per km</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+        
         self._next_button("travel_costs")
 
     def _location_details(self):
