@@ -1,240 +1,60 @@
-
 /* Main theme colors */
 :root {
-    --primary-color: #1976d2;
-    --primary-light: #4791db;
-    --primary-dark: #115293;
-    --secondary-color: #26a69a;
-    --background-color: #f8f9fa;
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --background-color: #ffffff;
     --text-color: #2c3e50;
-    --card-background: #ffffff;
-    --card-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    --border-radius: 8px;
-    --spacing-unit: 16px;
-}
-
-/* Global Styles */
-body {
-    font-family: 'Roboto', 'Helvetica Neue', sans-serif;
-    color: var(--text-color);
-    background-color: var(--background-color);
 }
 
 /* Typography */
-h1 {
-    color: var(--primary-dark);
-    font-weight: 700;
-    font-size: 2.5rem;
-    margin-bottom: var(--spacing-unit);
-}
-
-h2, h3 {
-    color: var(--primary-dark);
-    font-weight: 600;
+h1, h2, h3 {
+    color: var(--text-color);
+    font-family: 'Helvetica Neue', sans-serif;
 }
 
 /* Custom Streamlit elements */
 .stButton > button {
     background-color: var(--primary-color);
     color: white;
-    border-radius: var(--border-radius);
-    padding: 10px 24px;
-    font-weight: 500;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
-    border: none;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.stButton > button:hover {
-    background-color: var(--primary-dark);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transform: translateY(-1px);
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-weight: bold;
 }
 
 .stProgress > div > div {
     background-color: var(--secondary-color);
-    height: 6px;
-    border-radius: 3px;
 }
 
 /* Form elements */
 .stRadio > div {
-    background-color: var(--card-background);
-    padding: 12px;
-    border-radius: var(--border-radius);
-    margin: 8px 0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    border: 1px solid rgba(0,0,0,0.05);
-    transition: all 0.2s ease;
-}
-
-.stRadio > div:hover {
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    border-color: var(--primary-light);
+    background-color: var(--background-color);
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
 }
 
 .stNumberInput > div > div > input {
-    border-radius: var(--border-radius);
+    border-radius: 5px;
     border: 1px solid #e0e0e0;
-    padding: 8px 12px;
-    transition: all 0.2s ease;
-}
-
-.stNumberInput > div > div > input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
-}
-
-.stCheckbox > div {
-    background-color: var(--card-background);
-    padding: 8px;
-    border-radius: var(--border-radius);
-    margin: 4px 0;
-    transition: all 0.2s ease;
-}
-
-/* Expandable sections */
-.streamlit-expanderHeader {
-    background-color: var(--card-background);
-    border-radius: var(--border-radius);
-    padding: 8px 16px;
-    font-weight: 500;
-    box-shadow: var(--card-shadow);
-}
-
-.streamlit-expanderContent {
-    background-color: var(--card-background);
-    border-radius: 0 0 var(--border-radius) var(--border-radius);
-    padding: 16px;
-    box-shadow: var(--card-shadow);
-    margin-top: -8px;
-}
-
-/* Treatment comparison cards */
-.treatment-card {
-    background-color: var(--card-background);
-    padding: 24px;
-    border-radius: var(--border-radius);
-    box-shadow: var(--card-shadow);
-    margin: 16px 0;
-    transition: all 0.3s ease;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.treatment-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-}
-
-.treatment-card h3 {
-    color: var(--primary-color);
-    margin-bottom: 16px;
-    border-bottom: 2px solid var(--primary-light);
-    padding-bottom: 8px;
-}
-
-.cost-metric {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    margin: 16px 0;
-    text-align: center;
-}
-
-.pros-cons h4 {
-    font-size: 1.1rem;
-    margin-top: 16px;
-    margin-bottom: 8px;
-    color: var(--primary-dark);
-}
-
-.pros li {
-    color: var(--secondary-color);
-}
-
-.cons li {
-    color: #e57373;
 }
 
 /* Accessibility improvements */
-button:focus, input:focus, select:focus {
-    outline: 3px solid rgba(25, 118, 210, 0.3);
+button:focus {
+    outline: 3px solid var(--primary-color);
 }
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     .stButton > button {
         width: 100%;
-        padding: 12px;
-    }
-    
-    h1 {
-        font-size: 1.8rem;
-    }
-    
-    .treatment-card {
-        padding: 16px;
-    }
-    
-    .cost-metric {
-        font-size: 1.5rem;
     }
 }
 
-/* Custom tabs styling */
-.stTabs [data-baseweb="tab-list"] {
-    gap: 8px;
-}
-
-.stTabs [data-baseweb="tab"] {
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-    padding: 8px 16px;
-    background-color: #e9ecef;
-}
-
-.stTabs [aria-selected="true"] {
-    background-color: var(--primary-color) !important;
-    color: white !important;
-}
-
-/* Tables */
-.stTable table {
-    border-collapse: separate;
-    border-spacing: 0;
-    width: 100%;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--card-shadow);
-}
-
-.stTable thead tr th {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 12px;
-    text-align: left;
-    font-weight: 500;
-}
-
-.stTable tbody tr:nth-child(even) {
-    background-color: rgba(0,0,0,0.02);
-}
-
-.stTable tbody tr td {
-    padding: 12px;
-    border-top: 1px solid #e0e0e0;
-}
-
-/* Metrics */
-[data-testid="stMetricValue"] {
-    font-size: 1.5rem !important;
-    font-weight: 700 !important;
-    color: var(--primary-dark) !important;
-}
-
-[data-testid="stMetricLabel"] {
-    font-weight: 500 !important;
+/* Treatment comparison cards */
+.element-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 10px 0;
 }
