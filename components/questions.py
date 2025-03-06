@@ -87,8 +87,8 @@ class QuestionFlow:
             # Convert lump sum to monthly equivalent
             if "annual_income" in st.session_state:
                 st.session_state.income = st.session_state.annual_income / 12
-                st.info(f"Your estimated monthly income: ฿{st.session_state.income:,.2f} (calculated as annual income ÷ 12)")
-                st.info("For treatment cost calculations, we divide your annual income by 12 to estimate monthly income impact. This helps determine potential financial losses during treatment.")
+                st.info(f"Your estimated monthly income: ฿{st.session_state.income:,.2f} (คำนวณจาก รายได้ต่อปี ÷ 12)")
+                st.warning("**วิธีคำนวณรายได้แบบเหมาจ่าย (Lump sum)**: เราแบ่งรายได้ทั้งปีของคุณด้วย 12 เพื่อประมาณการรายได้ต่อเดือน เพื่อคำนวณผลกระทบด้านการเงินระหว่างการรักษา")
         else:
             st.session_state.income = 0
             
