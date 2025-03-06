@@ -87,7 +87,8 @@ class QuestionFlow:
             # Convert lump sum to monthly equivalent
             if "annual_income" in st.session_state:
                 st.session_state.income = st.session_state.annual_income / 12
-                st.info(f"Your estimated monthly income: ฿{st.session_state.income:,.2f}")
+                st.info(f"Your estimated monthly income: ฿{st.session_state.income:,.2f} (calculated as annual income ÷ 12)")
+                st.info("For treatment cost calculations, we divide your annual income by 12 to estimate monthly income impact. This helps determine potential financial losses during treatment.")
         else:
             st.session_state.income = 0
             
@@ -156,6 +157,7 @@ class QuestionFlow:
     def _home_suitability(self):
         st.subheader("Home Suitability for PD")
         st.info("Peritoneal dialysis (PD) requires:\n- Clean environment to prevent infection\n- Storage space for supplies (boxes of solution bags)\n- Access to running water and electricity\n- Space for equipment\n\nYour home assessment helps determine if PD is a viable option for you.")
+        st.warning("If your home doesn't meet cleanliness requirements, you may need to spend additional money (approximately ฿5,000) on home modifications or consider center-based treatment instead.")
         suitable = st.radio(
             "Is your home suitable for peritoneal dialysis (PD)?",
             options=["Yes", "No"],
@@ -164,16 +166,17 @@ class QuestionFlow:
         )
 
         if suitable == "Yes":
-            st.checkbox("There is a clean, dust-free corner", key="clean_corner", help="PD requires a clean area to reduce infection risk")
-            st.checkbox("There is a sink for handwashing", key="has_sink", help="Proper hand hygiene is essential for PD")
-            st.checkbox("There is adequate storage space for supplies", key="has_storage", help="PD requires storage for solution bags and equipment")
+            st.checkbox("There is a clean, dust-free corner", key="clean_corner", help="PD requires a clean area to reduce infection risk. Infections can lead to additional medical costs and hospitalization.")
+            st.checkbox("There is a sink for handwashing", key="has_sink", help="Proper hand hygiene is essential for PD to prevent infection. Without this, home-based PD may not be safe.")
+            st.checkbox("There is adequate storage space for supplies", key="has_storage", help="PD requires storage for solution bags (typically 20-30 bags per week) and equipment. Inadequate storage may require home modifications.")
+            st.checkbox("There is a private space for treatment", key="has_private", help="Privacy during exchanges is important for comfort and hygiene.")
             st.slider(
                 "Home condition score",
                 min_value=1,
                 max_value=10,
                 value=5,
                 key="home_score",
-                help="1 = Poor conditions, 10 = Excellent conditions"
+                help="1 = Poor conditions (additional costs for modification likely), 10 = Excellent conditions (no modifications needed)"
             )
         self._next_button("home_suitability")
 
