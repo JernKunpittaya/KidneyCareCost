@@ -54,6 +54,7 @@ if not st.session_state.show_results:
     with st.form("cost_calculator"):
         # Insurance type
         st.subheader(t['insurance_type'])
+        st.info(t.get('insurance_note', "Your insurance type significantly affects your out-of-pocket expenses for dialysis treatments."))
         insurance = st.radio(
             t['insurance_type'],
             options=[
@@ -61,12 +62,14 @@ if not st.session_state.show_results:
                 t['insurance_options']['civil_servant'],
                 t['insurance_options']['social_security'],
                 t['insurance_options']['private_insurance'],
-                t['insurance_options']['other']
+                t['insurance_options']['other'],
+                t.get('insurance_options', {}).get('no_insurance', "No insurance")
             ]
         )
 
         # Basic Information
         st.subheader(t['basic_info'])
+        st.info(t.get('basic_info_note', "This information helps us understand how dialysis may impact your work and income."))
         employment = st.radio(t['employment'], [t['yes'], t['no']])
 
         if employment == t['yes']:
@@ -74,15 +77,37 @@ if not st.session_state.show_results:
                 t['work_impact'],
                 [t['leave_job'], t['work_during_dialysis'], t['no_income_effect']]
             )
-            monthly_income = st.number_input(
-                t['monthly_income'],
-                min_value=0,
-                value=0,
-                step=1000
+            st.info(t.get('income_note', "Your income helps us calculate the economic impact of different treatment options."))
+            
+            # Income selection
+            income_type = st.radio(
+                t.get('income_type', "How do you receive your income?"),
+                [t.get('monthly_salary', "Monthly salary"), t.get('lump_sum', "Lump sum payments"), t.get('no_income', "No income")]
             )
+            
+            if income_type == t.get('monthly_salary', "Monthly salary"):
+                monthly_income = st.number_input(
+                    t['monthly_income'],
+                    min_value=0,
+                    value=0,
+                    step=1000
+                )
+            elif income_type == t.get('lump_sum', "Lump sum payments"):
+                annual_income = st.number_input(
+                    t.get('annual_income', "Please enter your annual income (THB):"),
+                    min_value=0,
+                    value=0,
+                    step=10000
+                )
+                # Convert to monthly for calculations
+                monthly_income = annual_income / 12
+                st.info(f"{t.get('estimated_monthly', 'Your estimated monthly income:')} ฿{monthly_income:,.2f}")
+            else:
+                monthly_income = 0
 
         # Caregiver needs
         st.subheader(t['caregiver_needs'])
+        st.info(t.get('caregiver_note', "Different treatments require different levels of assistance. This helps us estimate potential caregiver costs."))
         caregiver_type = st.radio(
             t['caregiver_type'],
             [t['family_caregiver'], t['hired_caregiver'], t['no_caregiver']]
@@ -98,10 +123,11 @@ if not st.session_state.show_results:
 
         # Home Assessment
         st.subheader(t['home_assessment'])
-        home_clean = st.checkbox(t['home_questions']['cleanliness'])
-        home_sink = st.checkbox(t['home_questions']['sink'])
-        home_space = st.checkbox(t['home_questions']['space'])
-        home_private = st.checkbox(t['home_questions']['crowding'])
+        st.info(t.get('home_note', "Peritoneal dialysis (PD) requires a clean environment and basic amenities at home. This helps determine if your home is suitable for PD treatment."))
+        home_clean = st.checkbox(t['home_questions']['cleanliness'], help=t.get('clean_help', "Clean environment reduces infection risk"))
+        home_sink = st.checkbox(t['home_questions']['sink'], help=t.get('sink_help', "Proper hand hygiene is essential"))
+        home_space = st.checkbox(t['home_questions']['space'], help=t.get('space_help', "Space for supplies and equipment"))
+        home_private = st.checkbox(t['home_questions']['crowding'], help=t.get('crowding_help', "Privacy is important for treatment"))
 
         # Treatment Frequency
         st.subheader(t['treatment_frequency'])
@@ -112,25 +138,29 @@ if not st.session_state.show_results:
 
         # Travel Information
         st.subheader(t['travel_info'])
+        st.info(t.get('travel_note', "Hemodialysis typically requires 2-3 trips to a dialysis center per week. Travel costs can be significant over time."))
         distance = st.number_input(
             t['distance'],
             min_value=0,
             value=0,
-            step=1
+            step=1,
+            help=t.get('distance_help', "Distance to nearest dialysis center in kilometers")
         )
 
         travel_cost = st.number_input(
             t['travel_cost'],
             min_value=0,
             value=0,
-            step=10
+            step=10,
+            help=t.get('travel_cost_help', "Cost per one-way trip")
         )
 
         food_cost = st.number_input(
             t['food_cost'],
             min_value=0,
             value=0,
-            step=10
+            step=10,
+            help=t.get('food_cost_help', "Food expenses during treatment days")
         )
 
         # Calculate button
@@ -143,10 +173,12 @@ if not st.session_state.show_results:
                 t['insurance_options']['civil_servant']: 0.0,   # 0% of total cost
                 t['insurance_options']['social_security']: 0.1, # 10% of total cost
                 t['insurance_options']['private_insurance']: 0.2, # 20% of total cost
-                t['insurance_options']['other']: 0.3           # 30% of total cost
+                t['insurance_options']['other']: 0.3,           # 30% of total cost
+                t.get('insurance_options', {}).get('no_insurance', "No insurance"): 1.0  # 100% of total cost (full price)
             }
 
-            coverage_factor = coverage_factors[insurance]
+            # Get coverage factor with fallback to full cost (1.0) if insurance type not found
+            coverage_factor = coverage_factors.get(insurance, 1.0)
             visits_per_month = 8 if hd_frequency == t['freq_2'] else 12
 
             # Calculate detailed costs
