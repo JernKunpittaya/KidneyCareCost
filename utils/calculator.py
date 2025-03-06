@@ -18,29 +18,18 @@ def calculate_costs(answers):
     if 'caregiver_payment' in answers:
         caregiver_cost = float(answers['caregiver_payment'])
     
-    # Calculate lost income with robust error handling
+    # Calculate lost income
     lost_income = 0
-    monthly_income = 0
+    monthly_income = float(answers.get('income', 0))
     
-    try:
-        # Get income with safe conversion and default to 0
-        if 'income' in answers and answers.get('income'):
-            monthly_income = float(answers.get('income', 0))
-        
-        # Check if income was entered as lump sum and convert to monthly
-        if answers.get('income_type') == "Lump sum payments" and 'annual_income' in answers:
-            if answers.get('annual_income'):
-                monthly_income = float(answers.get('annual_income', 0)) / 12
-                
-        # Calculate income loss based on work impact
-        if answers.get('work_impact') == "I will have to leave my job entirely":
-            lost_income = monthly_income
-        elif answers.get('work_impact') == "I will be able to work, just not during dialysis":
-            lost_income = monthly_income * 0.3  # Assuming 30% income loss
-            
-    except (ValueError, TypeError) as e:
-        # Handle any conversion errors gracefully
-        lost_income = 0  # Default to zero on error
+    # Check if income was entered as lump sum and converted to monthly
+    if answers.get('income_type') == "Lump sum payments" and 'annual_income' in answers:
+        monthly_income = float(answers.get('annual_income', 0)) / 12
+    
+    if answers.get('work_impact') == "I will have to leave my job entirely":
+        lost_income = monthly_income
+    elif answers.get('work_impact') == "I will be able to work, just not during dialysis":
+        lost_income = monthly_income * 0.3  # Assuming 30% income loss
     
     # Calculate final costs
     costs = {

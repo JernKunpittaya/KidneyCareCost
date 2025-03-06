@@ -39,33 +39,12 @@ if 'language' not in st.session_state:
 if 'show_results' not in st.session_state:
     st.session_state.show_results = False
 
-# Language selector with improved interface
-st.markdown("""
-<style>
-    .language-selector {
-        padding: 5px;
-        background-color: #f0f8ff;
-        border-radius: 5px;
-        margin-bottom: 10px;
-    }
-</style>
-<div class="language-selector">
-    <p style="font-size: 14px; margin-bottom: 5px;">🌐 Select your preferred language / เลือกภาษาที่ต้องการ:</p>
-</div>
-""", unsafe_allow_html=True)
-
-language = st.selectbox('', ['ไทย (Thai)', 'English'], 
-                         format_func=lambda x: x.split(" ")[0])
-st.session_state.language = 'th' if 'ไทย' in language else 'en'
+# Language selector
+language = st.selectbox('🌐 Language / ภาษา', ['ไทย', 'English'])
+st.session_state.language = 'th' if language == 'ไทย' else 'en'
 
 # Get translations
 t = TRANSLATIONS[st.session_state.language]
-
-# Language confirmation
-if st.session_state.language == 'th':
-    st.success("✅ กำลังใช้ภาษาไทย / Using Thai language")
-else:
-    st.success("✅ Using English language / กำลังใช้ภาษาอังกฤษ")
 
 # Title
 st.title(t['title'])
@@ -78,7 +57,7 @@ if not st.session_state.show_results:
         insurance = st.radio(
             t['insurance_type'],
             options=[
-                t.get('insurance_options', {}).get('gold_card', 'Universal Coverage Scheme'),
+                t['insurance_options']['gold_card'],
                 t['insurance_options']['civil_servant'],
                 t['insurance_options']['social_security'],
                 t['insurance_options']['private_insurance'],
@@ -113,32 +92,6 @@ if not st.session_state.show_results:
             caregiver_cost = st.number_input(
                 t['caregiver_cost'],
                 min_value=0,
-
-        # Add help button with FAQs for common user confusions
-        with st.expander("❓ Need help with this form?"):
-            st.markdown("""
-            ### Frequently Asked Questions
-            
-            **1. How is my income used in the calculation?**
-            - Monthly income helps us estimate potential income loss during treatment
-            - For lump sum payments, we divide your annual income by 12
-            
-            **2. What should I include in travel costs?**
-            - Transportation (public transport, fuel, taxi)
-            - Food and drinks during treatment days
-            - Parking fees if applicable
-            
-            **3. Which treatment is right for me?**
-            - This calculator shows costs only - speak with your healthcare provider about medical suitability
-            - Each treatment has different impacts on lifestyle and finances
-            
-            **4. Can I change my answers later?**
-            - Yes, click "Start Over" button after seeing results to retake the questionnaire
-            
-            **5. What if I don't know my exact income or costs?**
-            - Provide your best estimate - the calculator will still give you useful information
-            """)
-
                 value=0,
                 step=1000
             )
@@ -311,13 +264,3 @@ if st.session_state.show_results:
     st.markdown(t['costs_may_vary'])
     st.markdown(t['insurance_note'])
     st.markdown(t['consult_note'])
-
-        # Add validation for travel cost and other inputs
-        if 'travel_cost' in st.session_state:
-            try:
-                travel_cost = float(st.session_state['travel_cost'])
-            except (ValueError, TypeError):
-                st.warning("Please enter a valid number for travel cost. Using 0 for now.")
-                travel_cost = 0
-        else:
-            travel_cost = 0
