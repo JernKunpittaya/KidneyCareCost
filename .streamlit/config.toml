@@ -12,3 +12,28 @@ textColor = "#2c3e50"
 
 [browser]
 gatherUsageStats = false
+[server]
+enableCORS = false
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+primaryColor = "#1e88e5"
+backgroundColor = "#f8f9fa"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#2c3e50"
+font = "sans serif"
+
+[client]
+toolbarMode = "minimal"
+
+[ui]
+hideTopBar = false
+
+[runner]
+magicEnabled = false
+
+[mapbox]
+token = ""
