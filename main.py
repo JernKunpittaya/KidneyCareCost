@@ -74,7 +74,15 @@ try:
             padding: 1.5rem;
             border-radius: var(--border-radius); /* Use variable for consistency */
             /*box-shadow: var(--card-shadow); Removed box-shadow */
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem; /* Increased margin for better section separation */
+        }
+        
+        /* Section headers styling */
+        .section-container h2 {
+            margin-top: 0;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid #e0e0e0;
         }
 
         /* General table alignment */
@@ -122,12 +130,22 @@ try:
             width: 100%;
             box-sizing: border-box;
         }
+        
+        /* Add spacing to bullet points for better readability */
+        .cost-breakdown ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+        
+        .cost-breakdown li {
+            margin-bottom: 0.6rem;
+        }
 
         .cost-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 15px;
+            padding: 8px 15px; /* Reduced vertical padding for tighter grouping */
             border-bottom: 1px solid #e0e0e0;
             width: 100%;
             box-sizing: border-box;
@@ -170,6 +188,26 @@ try:
             border-radius: var(--border-radius); /* Use variable for consistency */
             /*box-shadow: var(--card-shadow); Removed box-shadow */
         }
+        
+        /* Form section styling */
+        .stForm .stSubheader {
+            margin-top: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            color: var(--primary-color);
+        }
+        
+        /* First subheader needs less top margin */
+        .stForm .stSubheader:first-of-type {
+            margin-top: 0.5rem;
+        }
+        
+        /* Group related form elements */
+        .stForm .stRadio, .stForm .stNumberInput, .stForm .stCheckbox {
+            margin-bottom: 1.2rem;
+            padding-left: 0.8rem;
+        }
 
         /* Treatment cards */
         .treatment-card {
@@ -192,7 +230,7 @@ try:
         /* Responsive design - desktop, tablet and mobile */
         @media (min-width: 992px) {
             .cost-item {
-                padding: 12px 20px;
+                padding: 10px 20px;
             }
             .cost-value {
                 min-width: 100px;
@@ -201,22 +239,27 @@ try:
                 max-width: 90%;
                 margin: 10px auto;
             }
+            /* Consistent column spacing for treatment cards */
+            [data-testid="column"] {
+                padding: 0.5rem !important;
+            }
         }
 
         /* Medium screens (tablets and small desktops) */
         @media (min-width: 641px) and (max-width: 991px) {
             .section-container {
-                padding: 1rem;
+                padding: 1.2rem;
+                margin-bottom: 1.5rem; /* Reduced margin for tablet */
             }
             .cost-item {
-                padding: 10px 15px;
+                padding: 8px 15px;
             }
             .cost-value {
                 min-width: 85px;
                 font-size: 0.9rem;
             }
             [data-testid="column"] > div {
-                padding: 0.5rem !important;
+                padding: 0.4rem !important;
             }
             /* Adjust expander content */
             .streamlit-expanderContent {
@@ -237,23 +280,49 @@ try:
             .cost-label {
                 max-width: 65%;
             }
+            /* Reduce form element spacing */
+            .stForm .stRadio, .stForm .stNumberInput, .stForm .stCheckbox {
+                margin-bottom: 0.8rem;
+            }
         }
 
         @media (max-width: 640px) {
             .main > div {
-                padding: 1rem 0.5rem;
+                padding: 0.8rem 0.5rem;
             }
             .stMarkdown p {
                 font-size: 0.9rem;
             }
             .cost-item {
-                padding: 10px 12px;
+                padding: 8px 12px;
+            }
+            .section-container {
+                padding: 1rem;
+                margin-bottom: 1.2rem; /* More compact for mobile */
+            }
+            /* Tighter spacing for form elements on mobile */
+            .stForm .stRadio, .stForm .stNumberInput, .stForm .stCheckbox {
+                margin-bottom: 0.6rem;
+            }
+            .stForm .stSubheader {
+                margin-top: 1.5rem;
+                margin-bottom: 0.8rem;
             }
         }
+        /* Expander styling */
+        .streamlit-expanderHeader {
+            background-color: var(--light-gray);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            padding: 8px 15px !important;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
         .streamlit-expanderContent {
             border: none;
             border-radius: 0 0 var(--border-radius) var(--border-radius);
-            padding: 15px !important;
+            padding: 12px !important;
+            background-color: #f9f9f9;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -505,11 +574,11 @@ try:
                 st.markdown(f"""
                 <div style='background-color: white; padding: 15px; border-radius: 8px; 
                             border-top: 4px solid {treatment_colors[treatment]};'>
-                    <h3 style='color: {treatment_colors[treatment]}; margin-bottom: 10px;'>{t['treatment_types'][treatment]}</h3>
-                    <div style='font-size: 1.5rem; font-weight: 600; color: #2c3e50; margin-bottom: 5px;'>
+                    <h3 style='color: {treatment_colors[treatment]}; margin-bottom: 8px;'>{t['treatment_types'][treatment]}</h3>
+                    <div style='font-size: 1.5rem; font-weight: 600; color: #2c3e50; margin-bottom: 3px;'>
                         ฿{st.session_state.monthly_totals[treatment]:,}
                     </div>
-                    <div style='font-size: 0.8rem; color: #7f8c8d;'>{t['per_month']}</div>
+                    <div style='font-size: 0.8rem; color: #7f8c8d; margin-bottom: 5px;'>{t['per_month']}</div>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -536,14 +605,14 @@ try:
 
         # Create custom HTML for better styling
         html_table = f"""
-        <table class="dataframe">
+        <table class="dataframe" style="margin: 0.5rem 0; border-spacing: 0;">
             <thead>
                 <tr>
-                    <th>{t['time_period']}</th>
-                    <th style="background-color: #1e88e5;">HD</th>
-                    <th style="background-color: #26a69a;">PD</th>
-                    <th style="background-color: #7e57c2;">APD</th>
-                    <th style="background-color: #ef5350;">CCC</th>
+                    <th style="padding: 10px 12px;">{t['time_period']}</th>
+                    <th style="background-color: #1e88e5; padding: 10px 12px;">HD</th>
+                    <th style="background-color: #26a69a; padding: 10px 12px;">PD</th>
+                    <th style="background-color: #7e57c2; padding: 10px 12px;">APD</th>
+                    <th style="background-color: #ef5350; padding: 10px 12px;">CCC</th>
                 </tr>
             </thead>
             <tbody>
