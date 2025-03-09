@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for better mobile experience
+# Custom CSS for better mobile experience and table formatting
 st.markdown("""
     <style>
     .block-container {
@@ -21,6 +21,9 @@ st.markdown("""
     .stButton > button {
         width: 100%;
         margin: 1rem 0;
+    }
+    .table-right td:not(:first-child) {
+        text-align: right !important;
     }
     @media (max-width: 640px) {
         .main > div {
@@ -89,12 +92,10 @@ if not st.session_state.show_results:
         )
 
         if caregiver_type == t['hired_caregiver']:
-            caregiver_cost = st.number_input(
-                t['caregiver_cost'],
-                min_value=0,
-                value=0,
-                step=1000
-            )
+            st.info("ค่าจ้างผู้ดูแล (ต่อเดือน):\n" +
+                   "- HD: ฿12,049\n" +
+                   "- CAPD: ฿8,741\n" +
+                   "- APD: ฿11,277")
 
         # Home Assessment
         st.subheader(t['home_assessment'])
@@ -149,21 +150,33 @@ if not st.session_state.show_results:
             coverage_factor = coverage_factors[insurance]
             visits_per_month = 8 if hd_frequency == t['freq_2'] else 12
 
-            # Calculate detailed costs
+            # Calculate caregiver costs based on treatment type
+            def calculate_caregiver_cost(treatment_type):
+                if caregiver_type == t['hired_caregiver']:
+                    rates = {
+                        'hd': 12049,   # Fixed rate for HD
+                        'pd': 8741,    # Fixed rate for CAPD
+                        'apd': 11277,  # Fixed rate for APD
+                        'ccc': 8741    # Using CAPD rate for conservative care
+                    }
+                    return rates.get(treatment_type, 0)
+                return 0  # No cost for family caregiver
+
+            # Update detailed costs calculation
             detailed_costs = {
                 'hd': {
                     t['cost_items']['base_cost']: 30000 * coverage_factor,
                     t['cost_items']['medicine']: 5000 * coverage_factor,
                     t['cost_items']['travel']: travel_cost * visits_per_month,
                     t['cost_items']['food']: food_cost * visits_per_month,
-                    t['cost_items']['caregiver']: caregiver_cost if caregiver_type == t['hired_caregiver'] else 0
+                    t['cost_items']['caregiver']: calculate_caregiver_cost('hd')
                 },
                 'pd': {
                     t['cost_items']['base_cost']: 25000 * coverage_factor,
                     t['cost_items']['medicine']: 4000 * coverage_factor,
                     t['cost_items']['equipment']: 3000 * coverage_factor,
                     t['cost_items']['utilities']: 500,
-                    t['cost_items']['caregiver']: caregiver_cost if caregiver_type == t['hired_caregiver'] else 0,
+                    t['cost_items']['caregiver']: calculate_caregiver_cost('pd'),
                     t['cost_items']['home_modification']: 5000 if not all([home_clean, home_sink, home_space, home_private]) else 0
                 },
                 'apd': {
@@ -171,13 +184,13 @@ if not st.session_state.show_results:
                     t['cost_items']['medicine']: 4000 * coverage_factor,
                     t['cost_items']['equipment']: 5000 * coverage_factor,
                     t['cost_items']['utilities']: 1000,
-                    t['cost_items']['caregiver']: caregiver_cost if caregiver_type == t['hired_caregiver'] else 0,
+                    t['cost_items']['caregiver']: calculate_caregiver_cost('apd'),
                     t['cost_items']['home_modification']: 5000 if not all([home_clean, home_sink, home_space, home_private]) else 0
                 },
                 'ccc': {
                     t['cost_items']['base_cost']: 15000 * coverage_factor,
                     t['cost_items']['medicine']: 3000 * coverage_factor,
-                    t['cost_items']['caregiver']: caregiver_cost if caregiver_type == t['hired_caregiver'] else 0
+                    t['cost_items']['caregiver']: calculate_caregiver_cost('ccc')
                 }
             }
 
@@ -235,7 +248,7 @@ if st.session_state.show_results:
         ('hd', 'HD'), ('pd', 'PD'), ('apd', 'APD'), ('ccc', 'CCC')
     ]):
         with cols[i]:
-            st.metric(t['treatment_types'][treatment], 
+            st.metric(t['treatment_types'][treatment],
                      f"฿{st.session_state.monthly_totals[treatment]:,.2f}")
             with st.expander(t['see_details']):
                 for item, cost in st.session_state.detailed_costs[treatment].items():
@@ -252,11 +265,19 @@ if st.session_state.show_results:
             'APD': [f"฿{st.session_state.yearly_costs['apd'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']],
             'CCC': [f"฿{st.session_state.yearly_costs['ccc'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']]
         })
+        st.markdown('<div class="table-right">', unsafe_allow_html=True)
         st.table(projections_df)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     if st.button(t['start_over']):
         st.session_state.show_results = False
         st.rerun()
+
+    # Print button
+    col1, col2 = st.columns([4, 1])
+    with col2:
+        if st.button(t.get('print', 'พิมพ์') if st.session_state.language == 'th' else 'Print'):
+            st.balloons()
 
     # Footer notes
     st.markdown("---")

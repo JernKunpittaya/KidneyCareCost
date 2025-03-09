@@ -33,6 +33,19 @@ TRANSLATIONS = {
         'hired_caregiver': 'ต้องจ้างผู้ดูแล',
         'no_caregiver': 'ไม่ต้องการผู้ดูแล',
         'caregiver_cost': 'ค่าจ้างผู้ดูแลต่อเดือน (บาท)',
+        'caregiver_costs': {
+            'title': 'ค่าใช้จ่ายผู้ดูแล',
+            'full_time': 'ค่าจ้างผู้ดูแลแบบเต็มเวลา',
+            'part_time': 'ค่าจ้างผู้ดูแลแบบไม่เต็มเวลา',
+            'per_visit': 'ค่าจ้างผู้ดูแลต่อครั้ง'
+        },
+        'caregiver_type_details': 'รายละเอียดการดูแล',
+        'caregiver_frequency': 'ความถี่ในการดูแล',
+        'frequency_options': {
+            'full_time': 'ดูแลแบบเต็มเวลา',
+            'part_time': 'ดูแลเฉพาะช่วงกลางวัน',
+            'per_visit': 'ดูแลเฉพาะเวลาทำการรักษา'
+        },
 
         'home_assessment': 'การประเมินบ้านสำหรับการล้างไตที่บ้าน',
         'home_questions': {
@@ -82,7 +95,18 @@ TRANSLATIONS = {
         'notes': 'หมายเหตุ',
         'costs_may_vary': '- ค่าใช้จ่ายเป็นการประมาณการเบื้องต้น อาจแตกต่างตามสถานการณ์จริง',
         'insurance_note': '- ค่าใช้จ่ายอาจลดลงตามสิทธิ์การรักษาที่ท่านมี',
-        'consult_note': '- กรุณาปรึกษาแพทย์และเจ้าหน้าที่สำหรับข้อมูลเพิ่มเติม'
+        'consult_note': '- กรุณาปรึกษาแพทย์และเจ้าหน้าที่สำหรับข้อมูลเพิ่มเติม',
+        'print': 'พิมพ์',
+        'download_pdf': 'ดาวน์โหลด PDF',
+        'share': 'แชร์',
+        'compare': 'เปรียบเทียบ',
+        'time_period': 'ระยะเวลา',
+        'year': 'ปี',
+        'years': 'ปี',
+        'treatment_comparison': 'เปรียบเทียบการรักษา',
+        'monthly_costs': 'ค่าใช้จ่ายรายเดือน',
+        'yearly_costs': 'ค่าใช้จ่ายรายปี',
+        'total_costs': 'ค่าใช้จ่ายรวม'
     },
     'en': {
         'title': 'Kidney Dialysis Cost Calculator',
@@ -118,6 +142,19 @@ TRANSLATIONS = {
         'hired_caregiver': 'Need to hire a caregiver',
         'no_caregiver': 'No caregiver needed',
         'caregiver_cost': 'Monthly caregiver cost (THB)',
+        'caregiver_costs': {
+            'title': 'Caregiver Costs',
+            'full_time': 'Full-time caregiver cost',
+            'part_time': 'Part-time caregiver cost',
+            'per_visit': 'Per-visit caregiver cost'
+        },
+        'caregiver_type_details': 'Care Details',
+        'caregiver_frequency': 'Care Frequency',
+        'frequency_options': {
+            'full_time': 'Full-time care',
+            'part_time': 'Daytime care only',
+            'per_visit': 'Treatment visits only'
+        },
 
         'home_assessment': 'Home Assessment for Home Dialysis',
         'home_questions': {
@@ -167,6 +204,17 @@ TRANSLATIONS = {
         'notes': 'Notes',
         'costs_may_vary': '- Costs are estimates and may vary based on actual circumstances',
         'insurance_note': '- Actual costs may be lower based on your healthcare coverage',
-        'consult_note': '- Please consult healthcare professionals for more information'
+        'consult_note': '- Please consult healthcare professionals for more information',
+        'print': 'Print',
+        'download_pdf': 'Download PDF',
+        'share': 'Share',
+        'compare': 'Compare',
+        'time_period': 'Time Period',
+        'year': 'Year',
+        'years': 'Years',
+        'treatment_comparison': 'Treatment Comparison',
+        'monthly_costs': 'Monthly Costs',
+        'yearly_costs': 'Yearly Costs',
+        'total_costs': 'Total Costs'
     }
 }
