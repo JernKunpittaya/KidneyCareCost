@@ -122,7 +122,7 @@ try:
             width: 100%;
             box-sizing: border-box;
         }
-        
+
         .cost-item {
             display: flex;
             justify-content: space-between;
@@ -132,18 +132,18 @@ try:
             width: 100%;
             box-sizing: border-box;
         }
-        
+
         .cost-item:last-child {
             border-bottom: none;
         }
-        
+
         .cost-label {
             font-weight: 500;
             color: var(--text-color);
             flex: 1;
             padding-right: 10px;
         }
-        
+
         .cost-value {
             text-align: right !important;
             font-family: 'Roboto Mono', monospace;
@@ -183,7 +183,7 @@ try:
             width: 100%;
             box-sizing: border-box;
         }
-        
+
         /* Column spacing for treatment cards */
         [data-testid="column"] {
             box-sizing: border-box;
@@ -202,7 +202,7 @@ try:
                 margin: 10px auto;
             }
         }
-        
+
         /* Medium screens (tablets and small desktops) */
         @media (min-width: 641px) and (max-width: 991px) {
             .section-container {
@@ -238,7 +238,7 @@ try:
                 max-width: 65%;
             }
         }
-        
+
         @media (max-width: 640px) {
             .main > div {
                 padding: 1rem 0.5rem;
@@ -249,6 +249,11 @@ try:
             .cost-item {
                 padding: 10px 12px;
             }
+        }
+        .streamlit-expanderContent {
+            border: none;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            padding: 15px !important;
         }
         </style>
     """, unsafe_allow_html=True)
