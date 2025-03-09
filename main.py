@@ -517,7 +517,7 @@ try:
                     st.markdown("<div class='cost-breakdown'>", unsafe_allow_html=True)
                     for item, cost in st.session_state.detailed_costs[treatment].items():
                         if cost > 0:
-                            st.markdown(f"<div class='cost-item'><span class='cost-label'>{item}:</span><span class='cost-value'>฿{int(cost):,}</span></div>", unsafe_allow_html=True)
+                            st.markdown(f"• {item}: <b>฿{int(cost):,}</b>", unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)  # Close the section container
