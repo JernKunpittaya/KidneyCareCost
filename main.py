@@ -217,7 +217,7 @@ try:
 
                 # Calculate monthly totals
                 monthly_totals = {
-                    treatment: sum(costs.values())
+                    treatment: int(sum(costs.values()))
                     for treatment, costs in detailed_costs.items()
                 }
 
@@ -225,9 +225,9 @@ try:
                 yearly_costs = {}
                 for treatment, monthly_cost in monthly_totals.items():
                     yearly_costs[treatment] = {
-                        '1_year': monthly_cost * 12,
-                        '5_years': sum([monthly_cost * 12 * (1.03 ** year) for year in range(5)]),
-                        '10_years': sum([monthly_cost * 12 * (1.03 ** year) for year in range(10)])
+                        '1_year': int(monthly_cost * 12),
+                        '5_years': int(sum([monthly_cost * 12 * (1.03 ** year) for year in range(5)])),
+                        '10_years': int(sum([monthly_cost * 12 * (1.03 ** year) for year in range(10)]))
                     }
 
                 # Store results in session state
@@ -235,7 +235,7 @@ try:
                 st.session_state.monthly_totals = monthly_totals
                 st.session_state.yearly_costs = yearly_costs
                 st.session_state.show_results = True
-                st.experimental_rerun()
+    st.experimental_rerun()
 
     if st.session_state.show_results:
         st.header(t['cost_comparison'])
