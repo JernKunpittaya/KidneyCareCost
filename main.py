@@ -42,30 +42,41 @@ try:
         <style>
         /* Import Google Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono&display=swap');
-        
+
+        /* Main theme colors */
+        :root {
+            --primary-color: #1e88e5;
+            --secondary-color: #26a69a;
+            --background-color: #ffffff;
+            --text-color: #2c3e50;
+            --light-gray: #f8f9fa;
+            --card-shadow: none; /* Modified: Removed box shadow */
+            --border-radius: 8px;
+        }
+
         /* General styling */
         .main {
             font-family: 'Roboto', sans-serif;
         }
-        
+
         /* Header styling */
         .main-header {
-            background-color: #f8f9fa;
+            background-color: var(--light-gray); /* Use variable for consistency */
             padding: 1.5rem;
-            border-radius: 8px;
+            border-radius: var(--border-radius); /* Use variable for consistency */
             margin-bottom: 2rem;
-            border-left: 5px solid #1e88e5;
+            border-left: 5px solid var(--primary-color); /* Use variable for consistency */
         }
-        
+
         /* Section styling */
         .section-container {
-            background-color: white;
+            background-color: var(--background-color); /* Use variable for consistency */
             padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-radius: var(--border-radius); /* Use variable for consistency */
+            /*box-shadow: var(--card-shadow); Removed box-shadow */
             margin-bottom: 1.5rem;
         }
-        
+
         /* General table alignment */
         .table-right td:not(:first-child) {
             text-align: right !important;
@@ -76,30 +87,30 @@ try:
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
-            border-radius: 8px;
+            border-radius: var(--border-radius); /* Use variable for consistency */
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            /*box-shadow: var(--card-shadow); Removed box-shadow */
         }
-        
+
         .dataframe th {
-            background-color: #1e88e5;
+            background-color: var(--primary-color); /* Use variable for consistency */
             color: white;
             padding: 12px;
             text-align: left !important;
         }
-        
+
         .dataframe td {
             padding: 10px;
             border-bottom: 1px solid #e0e0e0;
         }
-        
+
         .dataframe td:not(:first-child) {
             text-align: right !important;
             font-family: 'Roboto Mono', monospace;
         }
-        
+
         .dataframe tr:nth-child(even) {
-            background-color: #f8f9fa;
+            background-color: var(--light-gray); /* Use variable for consistency */
         }
 
         /* Cost value alignment */
@@ -110,7 +121,7 @@ try:
             padding: 5px 10px;
             background-color: rgba(30, 136, 229, 0.1);
             border-radius: 4px;
-            color: #1e88e5;
+            color: var(--primary-color); /* Use variable for consistency */
             font-weight: 600;
         }
 
@@ -118,26 +129,26 @@ try:
         [data-testid="stTable"] table td:not(:first-child) {
             text-align: right !important;
         }
-        
+
         /* Form styling */
         .stForm > div {
-            background-color: white;
+            background-color: var(--background-color); /* Use variable for consistency */
             padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-radius: var(--border-radius); /* Use variable for consistency */
+            /*box-shadow: var(--card-shadow); Removed box-shadow */
         }
-        
+
         /* Treatment cards */
         .treatment-card {
-            background-color: white;
+            background-color: var(--background-color); /* Use variable for consistency */
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-radius: var(--border-radius); /* Use variable for consistency */
+            /*box-shadow: var(--card-shadow); Removed box-shadow */
             margin: 15px 0;
-            border-top: 4px solid #1e88e5;
+            border-top: 4px solid var(--primary-color); /* Use variable for consistency */
             transition: all 0.3s ease;
         }
-        
+
         /* Mobile responsiveness */
         @media (max-width: 640px) {
             .main > div {
@@ -316,7 +327,7 @@ try:
 
         # Monthly costs bar chart with enhanced colors and styling
         colors = ['#1e88e5', '#26a69a', '#7e57c2', '#ef5350']
-        
+
         fig = go.Figure(data=[
             go.Bar(
                 x=[t['treatment_types'][k] for k in ['hd', 'pd', 'apd', 'ccc']],
@@ -368,14 +379,14 @@ try:
                 font_family="Roboto"
             )
         )
-        
+
         # Chart container styling
         st.markdown("""
         <div style="background-color: white; padding: 20px; border-radius: 8px;">
         """, unsafe_allow_html=True)
-        
+
         st.plotly_chart(fig, use_container_width=True)
-        
+
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Detailed breakdown for each treatment with enhanced styling
@@ -404,17 +415,17 @@ try:
                     <div style='font-size: 0.8rem; color: #7f8c8d;'>{t['per_month']}</div>
                 </div>
                 """, unsafe_allow_html=True)
-                
+
                 with st.expander(t['see_details']):
                     for item, cost in st.session_state.detailed_costs[treatment].items():
                         if cost > 0:
                             st.markdown(f"{item}: <div class='cost-value'>฿{int(cost):,}</div>", unsafe_allow_html=True)
-        
+
         st.markdown("</div>", unsafe_allow_html=True)  # Close the section container
-        
+
         # Yearly projections with enhanced styling
         st.markdown(f"<div class='section-container'><h2>{t['yearly_projections']}</h2>", unsafe_allow_html=True)
-        
+
         # Create dataframe for projections
         projections_df = pd.DataFrame({
             t['time_period']: [f"1 {t['year']}", f"5 {t['years']}", f"10 {t['years']}"],
@@ -438,7 +449,7 @@ try:
             </thead>
             <tbody>
         """
-        
+
         for i, row in projections_df.iterrows():
             html_table += "<tr>"
             html_table += f"<td>{row[t['time_period']]}</td>"
@@ -447,13 +458,13 @@ try:
             html_table += f"<td>{row['APD']}</td>"
             html_table += f"<td>{row['CCC']}</td>"
             html_table += "</tr>"
-            
+
         html_table += """
             </tbody>
         </table>
         </div>
         """
-        
+
         st.markdown(html_table, unsafe_allow_html=True)
 
         # Action buttons
