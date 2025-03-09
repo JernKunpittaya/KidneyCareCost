@@ -7,7 +7,8 @@ try:
     st.set_page_config(
         page_title="Kidney Dialysis Cost Calculator",
         page_icon="💉",
-        layout="wide"
+        layout="wide",
+        initial_sidebar_state="collapsed"
     )
 except Exception as e:
     st.error(f"Failed to set page config: {str(e)}")
@@ -37,129 +38,9 @@ try:
     # Title with enhanced styling
     st.markdown(f"<div class='main-header'><h1>{t['title']}</h1><p>{t['subtitle']}</p></div>", unsafe_allow_html=True)
 
-    # Custom CSS for better experience and visual design
-    st.markdown("""
-        <style>
-        /* Import Google Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono&display=swap');
-
-        /* Main theme colors */
-        :root {
-            --primary-color: #1e88e5;
-            --secondary-color: #26a69a;
-            --background-color: #ffffff;
-            --text-color: #2c3e50;
-            --light-gray: #f8f9fa;
-            --card-shadow: none; /* Modified: Removed box shadow */
-            --border-radius: 8px;
-        }
-
-        /* General styling */
-        .main {
-            font-family: 'Roboto', sans-serif;
-        }
-
-        /* Header styling */
-        .main-header {
-            background-color: var(--light-gray); /* Use variable for consistency */
-            padding: 1.5rem;
-            border-radius: var(--border-radius); /* Use variable for consistency */
-            margin-bottom: 2rem;
-            border-left: 5px solid var(--primary-color); /* Use variable for consistency */
-        }
-
-        /* Section styling */
-        .section-container {
-            background-color: var(--background-color); /* Use variable for consistency */
-            padding: 1.5rem;
-            border-radius: var(--border-radius); /* Use variable for consistency */
-            /*box-shadow: var(--card-shadow); Removed box-shadow */
-            margin-bottom: 1.5rem;
-        }
-
-        /* General table alignment */
-        .table-right td:not(:first-child) {
-            text-align: right !important;
-        }
-
-        /* DataFrame styling */
-        .dataframe {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            border-radius: var(--border-radius); /* Use variable for consistency */
-            overflow: hidden;
-            /*box-shadow: var(--card-shadow); Removed box-shadow */
-        }
-
-        .dataframe th {
-            background-color: var(--primary-color); /* Use variable for consistency */
-            color: white;
-            padding: 12px;
-            text-align: left !important;
-        }
-
-        .dataframe td {
-            padding: 10px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .dataframe td:not(:first-child) {
-            text-align: right !important;
-            font-family: 'Roboto Mono', monospace;
-        }
-
-        .dataframe tr:nth-child(even) {
-            background-color: var(--light-gray); /* Use variable for consistency */
-        }
-
-        /* Cost value alignment */
-        .cost-value {
-            text-align: right !important;
-            font-family: 'Roboto Mono', monospace;
-            float: right;
-            padding: 5px 10px;
-            background-color: rgba(30, 136, 229, 0.1);
-            border-radius: 4px;
-            color: var(--primary-color); /* Use variable for consistency */
-            font-weight: 600;
-        }
-
-        /* Streamlit table cell alignment */
-        [data-testid="stTable"] table td:not(:first-child) {
-            text-align: right !important;
-        }
-
-        /* Form styling */
-        .stForm > div {
-            background-color: var(--background-color); /* Use variable for consistency */
-            padding: 1.5rem;
-            border-radius: var(--border-radius); /* Use variable for consistency */
-            /*box-shadow: var(--card-shadow); Removed box-shadow */
-        }
-
-        /* Treatment cards */
-        .treatment-card {
-            background-color: var(--background-color); /* Use variable for consistency */
-            padding: 20px;
-            border-radius: var(--border-radius); /* Use variable for consistency */
-            /*box-shadow: var(--card-shadow); Removed box-shadow */
-            margin: 15px 0;
-            border-top: 4px solid var(--primary-color); /* Use variable for consistency */
-            transition: all 0.3s ease;
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 640px) {
-            .main > div {
-                padding: 1rem 0.5rem;
-            }
-            .stMarkdown p {
-                font-size: 0.9rem;
-            }
-        }
-        </style>
-    """, unsafe_allow_html=True)
+    # Import CSS from external file for better organization
+    with open('assets/style.css', 'r') as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
     if not st.session_state.show_results:
         with st.form("cost_calculator"):
@@ -381,12 +262,8 @@ try:
         )
 
         # Chart container styling
-        st.markdown("""
-        <div style="background-color: white; padding: 20px; border-radius: 8px;">
-        """, unsafe_allow_html=True)
-
+        st.markdown('<div class="section-container">', unsafe_allow_html=True)
         st.plotly_chart(fig, use_container_width=True)
-
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Detailed breakdown for each treatment with enhanced styling
@@ -404,10 +281,9 @@ try:
             ('hd', 'HD'), ('pd', 'PD'), ('apd', 'APD'), ('ccc', 'CCC')
         ]):
             with cols[i]:
-                # Custom styled card for each treatment
+                # Custom styled card for each treatment using consistent class naming
                 st.markdown(f"""
-                <div style='background-color: white; padding: 15px; border-radius: 8px; 
-                            border-top: 4px solid {treatment_colors[treatment]};'>
+                <div class="treatment-card" style='border-top: 4px solid {treatment_colors[treatment]};'>
                     <h3 style='color: {treatment_colors[treatment]}; margin-bottom: 10px;'>{t['treatment_types'][treatment]}</h3>
                     <div style='font-size: 1.5rem; font-weight: 600; color: #2c3e50; margin-bottom: 5px;'>
                         ฿{st.session_state.monthly_totals[treatment]:,}
