@@ -369,9 +369,9 @@ try:
             )
         )
         
-        # Add shadow effect to the chart container
+        # Chart container styling
         st.markdown("""
-        <div style="background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+        <div style="background-color: white; padding: 20px; border-radius: 8px;">
         """, unsafe_allow_html=True)
         
         st.plotly_chart(fig, use_container_width=True)
@@ -396,7 +396,7 @@ try:
                 # Custom styled card for each treatment
                 st.markdown(f"""
                 <div style='background-color: white; padding: 15px; border-radius: 8px; 
-                            box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-top: 4px solid {treatment_colors[treatment]};'>
+                            border-top: 4px solid {treatment_colors[treatment]};'>
                     <h3 style='color: {treatment_colors[treatment]}; margin-bottom: 10px;'>{t['treatment_types'][treatment]}</h3>
                     <div style='font-size: 1.5rem; font-weight: 600; color: #2c3e50; margin-bottom: 5px;'>
                         ฿{st.session_state.monthly_totals[treatment]:,}
