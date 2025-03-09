@@ -113,16 +113,40 @@ try:
             background-color: var(--light-gray); /* Use variable for consistency */
         }
 
-        /* Cost value alignment */
+        /* Cost breakdown styling */
+        .cost-breakdown {
+            background-color: var(--light-gray);
+            border-radius: var(--border-radius);
+            padding: 12px;
+            margin-top: 10px;
+        }
+        
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .cost-item:last-child {
+            border-bottom: none;
+        }
+        
+        .cost-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
         .cost-value {
             text-align: right !important;
             font-family: 'Roboto Mono', monospace;
-            float: right;
             padding: 5px 10px;
             background-color: rgba(30, 136, 229, 0.1);
             border-radius: 4px;
             color: var(--primary-color); /* Use variable for consistency */
             font-weight: 600;
+            margin-left: 10px;
         }
 
         /* Streamlit table cell alignment */
@@ -417,9 +441,11 @@ try:
                 """, unsafe_allow_html=True)
 
                 with st.expander(t['see_details']):
+                    st.markdown("<div class='cost-breakdown'>", unsafe_allow_html=True)
                     for item, cost in st.session_state.detailed_costs[treatment].items():
                         if cost > 0:
-                            st.markdown(f"{item}: <div class='cost-value'>฿{int(cost):,}</div>", unsafe_allow_html=True)
+                            st.markdown(f"<div class='cost-item'><span class='cost-label'>{item}:</span><span class='cost-value'>฿{int(cost):,}</span></div>", unsafe_allow_html=True)
+                    st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)  # Close the section container
 
