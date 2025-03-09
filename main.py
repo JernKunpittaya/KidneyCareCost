@@ -321,7 +321,7 @@ try:
             go.Bar(
                 x=[t['treatment_types'][k] for k in ['hd', 'pd', 'apd', 'ccc']],
                 y=[st.session_state.monthly_totals[k] for k in ['hd', 'pd', 'apd', 'ccc']],
-                text=[f"฿{cost:,.0f}" for cost in [st.session_state.monthly_totals[k] for k in ['hd', 'pd', 'apd', 'ccc']]],
+                text=[f"฿{int(cost):,}" for cost in [st.session_state.monthly_totals[k] for k in ['hd', 'pd', 'apd', 'ccc']]],
                 textposition='auto',
                 marker_color=colors,
                 marker_line_width=0,
@@ -399,7 +399,7 @@ try:
                             box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-top: 4px solid {treatment_colors[treatment]};'>
                     <h3 style='color: {treatment_colors[treatment]}; margin-bottom: 10px;'>{t['treatment_types'][treatment]}</h3>
                     <div style='font-size: 1.5rem; font-weight: 600; color: #2c3e50; margin-bottom: 5px;'>
-                        ฿{st.session_state.monthly_totals[treatment]:,.2f}
+                        ฿{st.session_state.monthly_totals[treatment]:,}
                     </div>
                     <div style='font-size: 0.8rem; color: #7f8c8d;'>{t['per_month']}</div>
                 </div>
@@ -408,7 +408,7 @@ try:
                 with st.expander(t['see_details']):
                     for item, cost in st.session_state.detailed_costs[treatment].items():
                         if cost > 0:
-                            st.markdown(f"{item}: <div class='cost-value'>฿{cost:,.2f}</div>", unsafe_allow_html=True)
+                            st.markdown(f"{item}: <div class='cost-value'>฿{int(cost):,}</div>", unsafe_allow_html=True)
 
         # Yearly projections with enhanced styling
         st.markdown(f"<div class='section-container'><h2>{t['yearly_projections']}</h2>", unsafe_allow_html=True)
@@ -416,10 +416,10 @@ try:
         # Create dataframe for projections
         projections_df = pd.DataFrame({
             t['time_period']: [f"1 {t['year']}", f"5 {t['years']}", f"10 {t['years']}"],
-            'HD': [f"฿{st.session_state.yearly_costs['hd'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']],
-            'PD': [f"฿{st.session_state.yearly_costs['pd'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']],
-            'APD': [f"฿{st.session_state.yearly_costs['apd'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']],
-            'CCC': [f"฿{st.session_state.yearly_costs['ccc'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']]
+            'HD': [f"฿{st.session_state.yearly_costs['hd'][k]:,}" for k in ['1_year', '5_years', '10_years']],
+            'PD': [f"฿{st.session_state.yearly_costs['pd'][k]:,}" for k in ['1_year', '5_years', '10_years']],
+            'APD': [f"฿{st.session_state.yearly_costs['apd'][k]:,}" for k in ['1_year', '5_years', '10_years']],
+            'CCC': [f"฿{st.session_state.yearly_costs['ccc'][k]:,}" for k in ['1_year', '5_years', '10_years']]
         })
 
         # Create custom HTML for better styling
