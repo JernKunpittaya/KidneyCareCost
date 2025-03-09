@@ -379,7 +379,7 @@ try:
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Detailed breakdown for each treatment with enhanced styling
-        st.markdown(f"<h2 class='section-title'>{t['monthly_overview']}</h2>", unsafe_allow_html=True)
+        st.markdown(f"<div class='section-container'><h2>{t['monthly_overview']}</h2>", unsafe_allow_html=True)
         cols = st.columns(4)
 
         treatment_colors = {
@@ -409,7 +409,9 @@ try:
                     for item, cost in st.session_state.detailed_costs[treatment].items():
                         if cost > 0:
                             st.markdown(f"{item}: <div class='cost-value'>฿{int(cost):,}</div>", unsafe_allow_html=True)
-
+        
+        st.markdown("</div>", unsafe_allow_html=True)  # Close the section container
+        
         # Yearly projections with enhanced styling
         st.markdown(f"<div class='section-container'><h2>{t['yearly_projections']}</h2>", unsafe_allow_html=True)
         
@@ -455,21 +457,24 @@ try:
         st.markdown(html_table, unsafe_allow_html=True)
 
         # Action buttons
+        st.markdown("<div class='section-container'>", unsafe_allow_html=True)
         cols = st.columns([4, 1, 1])
         with cols[1]:
-            if st.button(t['start_over']):
+            if st.button(t['start_over'], use_container_width=True):
                 st.session_state.clear()
                 st.rerun()
         with cols[2]:
-            if st.button(t['print']):
+            if st.button(t['print'], use_container_width=True):
                 st.balloons()
+        st.markdown("</div>", unsafe_allow_html=True)
 
         # Footer notes
-        st.markdown("---")
+        st.markdown("<div class='section-container footer-notes'>", unsafe_allow_html=True)
         st.markdown(f"**{t['notes']}:**")
         st.markdown(t['costs_may_vary'])
         st.markdown(t['insurance_note'])
         st.markdown(t['consult_note'])
+        st.markdown("</div>", unsafe_allow_html=True)
 
 except Exception as e:
     st.error(f"An error occurred: {str(e)}")
