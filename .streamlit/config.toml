@@ -1,4 +1,3 @@
-
 [server]
 port = 5000
 address = "0.0.0.0"
@@ -6,11 +5,10 @@ headless = true
 enableCORS = false
 
 [theme]
-primaryColor = "#1e88e5"
-backgroundColor = "#f5f7fa"
-secondaryBackgroundColor = "#ffffff"
+primaryColor = "#3498db"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f8f9fa"
 textColor = "#2c3e50"
-font = "sans-serif"
 
 [browser]
 gatherUsageStats = false
