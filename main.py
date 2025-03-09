@@ -119,6 +119,8 @@ try:
             padding: 10px 0;
             margin-top: 10px;
             border: 1px solid #e0e0e0;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .cost-item {
@@ -127,6 +129,8 @@ try:
             align-items: center;
             padding: 12px 15px;
             border-bottom: 1px solid #e0e0e0;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .cost-item:last-child {
@@ -136,6 +140,8 @@ try:
         .cost-label {
             font-weight: 500;
             color: var(--text-color);
+            flex: 1;
+            padding-right: 10px;
         }
         
         .cost-value {
@@ -146,9 +152,10 @@ try:
             border-radius: 4px;
             color: var(--primary-color); /* Use variable for consistency */
             font-weight: 600;
-            margin-left: 10px;
             min-width: 80px;
             text-align: center;
+            display: inline-block;
+            white-space: nowrap;
         }
 
         /* Streamlit table cell alignment */
@@ -173,9 +180,16 @@ try:
             margin: 15px 0;
             border-top: 4px solid var(--primary-color); /* Use variable for consistency */
             transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Column spacing for treatment cards */
+        [data-testid="column"] {
+            box-sizing: border-box;
         }
 
-        /* Responsive design - desktop and mobile */
+        /* Responsive design - desktop, tablet and mobile */
         @media (min-width: 992px) {
             .cost-item {
                 padding: 12px 20px;
@@ -186,6 +200,42 @@ try:
             .cost-breakdown {
                 max-width: 90%;
                 margin: 10px auto;
+            }
+        }
+        
+        /* Medium screens (tablets and small desktops) */
+        @media (min-width: 641px) and (max-width: 991px) {
+            .section-container {
+                padding: 1rem;
+            }
+            .cost-item {
+                padding: 10px 15px;
+            }
+            .cost-value {
+                min-width: 85px;
+                font-size: 0.9rem;
+            }
+            [data-testid="column"] > div {
+                padding: 0.5rem !important;
+            }
+            /* Adjust expander content */
+            .streamlit-expanderContent {
+                padding: 10px !important;
+            }
+            /* Ensure cost breakdown fits within the cards */
+            .cost-breakdown {
+                width: 100%;
+                margin: 5px 0;
+            }
+            /* Better alignment for cost details */
+            .cost-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+            }
+            .cost-label {
+                max-width: 65%;
             }
         }
         
