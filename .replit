@@ -4,8 +4,8 @@ modules = ["python-3.11"]
 channel = "stable-24_05"
 
 [deployment]
-deploymentTarget = "static"
-publicDir = "KidneyCareCost"
+deploymentTarget = "cloudrun"
+run = "streamlit run main.py --server.port=8501 --server.address=0.0.0.0"
 
 [workflows]
 runButton = "Project"
@@ -35,9 +35,5 @@ args = "streamlit run main.py"
 waitForPort = 5000
 
 [[ports]]
-localPort = 5000
-externalPort = 80
-
-[[ports]]
 localPort = 8501
-externalPort = 3000
+externalPort = 80
