@@ -218,3 +218,155 @@ TRANSLATIONS = {
         'total_costs': 'Total Costs'
     }
 }
+# Translations for the kidney dialysis cost calculator
+
+TRANSLATIONS = {
+    'th': {
+        'title': 'เครื่องคำนวณค่าใช้จ่ายในการฟอกไต',
+        'subtitle': 'เปรียบเทียบค่าใช้จ่ายสำหรับทางเลือกในการรักษาโรคไตเรื้อรัง',
+        'insurance_type': 'ประเภทประกันสุขภาพ',
+        'insurance_options': {
+            'gold_card': 'บัตรทอง (สิทธิ์ 30 บาท)',
+            'civil_servant': 'สิทธิ์ข้าราชการ',
+            'social_security': 'ประกันสังคม',
+            'private_insurance': 'ประกันสุขภาพเอกชน',
+            'other': 'อื่นๆ'
+        },
+        'basic_info': 'ข้อมูลพื้นฐาน',
+        'employment': 'คุณทำงานอยู่หรือไม่',
+        'yes': 'ใช่',
+        'no': 'ไม่',
+        'work_impact': 'การฟอกไตจะส่งผลกระทบต่อการทำงานของคุณอย่างไร',
+        'leave_job': 'ฉันจะต้องลาออกจากงาน',
+        'work_during_dialysis': 'ฉันสามารถทำงานได้ แต่ไม่ใช่ในระหว่างการฟอกไต',
+        'no_income_effect': 'การฟอกไตจะไม่ส่งผลกระทบต่อรายได้ของฉัน',
+        'monthly_income': 'รายได้รายเดือนของคุณ (บาท)',
+        'caregiver_needs': 'ความต้องการผู้ดูแล',
+        'caregiver_type': 'คุณต้องการผู้ดูแลหรือไม่',
+        'family_caregiver': 'ครอบครัวเป็นผู้ดูแล',
+        'hired_caregiver': 'จ้างผู้ดูแล',
+        'no_caregiver': 'ไม่ต้องการผู้ดูแล',
+        'caregiver_costs': {
+            'title': 'ค่าใช้จ่ายเฉลี่ยสำหรับผู้ดูแล'
+        },
+        'home_assessment': 'การประเมินความเหมาะสมของบ้าน',
+        'home_questions': {
+            'cleanliness': 'บ้านของฉันสะอาดและปราศจากฝุ่น',
+            'sink': 'มีอ่างล้างมือที่สะอาด',
+            'space': 'มีพื้นที่เพียงพอสำหรับอุปกรณ์และการบำบัด',
+            'crowding': 'มีพื้นที่ส่วนตัวสำหรับการบำบัด'
+        },
+        'treatment_frequency': 'ความถี่ในการรักษา',
+        'hd_frequency': 'ความถี่ในการฟอกไตแบบ HD',
+        'freq_2': '2 ครั้งต่อสัปดาห์',
+        'freq_3': '3 ครั้งต่อสัปดาห์',
+        'travel_info': 'ข้อมูลการเดินทาง',
+        'distance': 'ระยะทางไปยังศูนย์ฟอกไต (กม.)',
+        'travel_cost': 'ค่าเดินทางต่อครั้ง (บาท)',
+        'food_cost': 'ค่าอาหารระหว่างเดินทางต่อครั้ง (บาท)',
+        'calculate': 'คำนวณค่าใช้จ่าย',
+        'cost_items': {
+            'base_cost': 'ค่ารักษาพื้นฐาน',
+            'medicine': 'ค่ายา',
+            'travel': 'ค่าเดินทาง',
+            'food': 'ค่าอาหาร',
+            'caregiver': 'ค่าผู้ดูแล',
+            'equipment': 'ค่าอุปกรณ์',
+            'utilities': 'ค่าสาธารณูปโภค',
+            'home_modification': 'ค่าปรับปรุงบ้าน'
+        },
+        'cost_comparison': 'เปรียบเทียบค่าใช้จ่าย',
+        'monthly_overview': 'ภาพรวมค่าใช้จ่ายรายเดือน',
+        'treatment_types': {
+            'hd': 'การฟอกไตด้วยเครื่อง (HD)',
+            'pd': 'การล้างไตทางช่องท้อง (CAPD)',
+            'apd': 'การล้างไตทางช่องท้องด้วยเครื่อง (APD)',
+            'ccc': 'การรักษาแบบประคับประคอง (CCC)'
+        },
+        'see_details': 'ดูรายละเอียด',
+        'yearly_projections': 'การคาดการณ์ค่าใช้จ่ายรายปี',
+        'time_period': 'ระยะเวลา',
+        'year': 'ปี',
+        'years': 'ปี',
+        'start_over': 'เริ่มใหม่',
+        'print': 'พิมพ์',
+        'notes': 'หมายเหตุ',
+        'costs_may_vary': 'ค่าใช้จ่ายอาจแตกต่างกันไปขึ้นอยู่กับปัจจัยหลายประการ รวมถึงสถานที่ ความรุนแรงของโรค และการตอบสนองต่อการรักษา',
+        'insurance_note': 'ค่าใช้จ่ายที่แสดงเป็นการประมาณการเท่านั้น และอาจแตกต่างจากค่าใช้จ่ายจริงที่ครอบคลุมโดยประกันสุขภาพของคุณ',
+        'consult_note': 'โปรดปรึกษาแพทย์เพื่อรับคำแนะนำที่เหมาะสมกับสถานการณ์ของคุณ'
+    },
+    'en': {
+        'title': 'Kidney Dialysis Cost Calculator',
+        'subtitle': 'Compare costs for different chronic kidney disease treatment options',
+        'insurance_type': 'Insurance Type',
+        'insurance_options': {
+            'gold_card': 'Gold Card (30 Baht Scheme)',
+            'civil_servant': 'Civil Servant Medical Benefit',
+            'social_security': 'Social Security',
+            'private_insurance': 'Private Insurance',
+            'other': 'Other'
+        },
+        'basic_info': 'Basic Information',
+        'employment': 'Are you currently employed?',
+        'yes': 'Yes',
+        'no': 'No',
+        'work_impact': 'How will dialysis affect your work?',
+        'leave_job': 'I will have to leave my job entirely',
+        'work_during_dialysis': 'I will be able to work, just not during dialysis',
+        'no_income_effect': 'Dialysis will not affect how much I get paid',
+        'monthly_income': 'Your monthly income (THB)',
+        'caregiver_needs': 'Caregiver Needs',
+        'caregiver_type': 'Do you need a caregiver?',
+        'family_caregiver': 'Family caregiver',
+        'hired_caregiver': 'Hired caregiver',
+        'no_caregiver': 'No caregiver needed',
+        'caregiver_costs': {
+            'title': 'Average caregiver costs'
+        },
+        'home_assessment': 'Home Assessment',
+        'home_questions': {
+            'cleanliness': 'My home is clean and dust-free',
+            'sink': 'I have a clean sink',
+            'space': 'I have enough space for equipment and treatment',
+            'crowding': 'I have private space for treatment'
+        },
+        'treatment_frequency': 'Treatment Frequency',
+        'hd_frequency': 'HD treatment frequency',
+        'freq_2': '2 times per week',
+        'freq_3': '3 times per week',
+        'travel_info': 'Travel Information',
+        'distance': 'Distance to dialysis center (km)',
+        'travel_cost': 'Travel cost per visit (THB)',
+        'food_cost': 'Food cost during travel per visit (THB)',
+        'calculate': 'Calculate Costs',
+        'cost_items': {
+            'base_cost': 'Base treatment cost',
+            'medicine': 'Medicine',
+            'travel': 'Travel',
+            'food': 'Food',
+            'caregiver': 'Caregiver',
+            'equipment': 'Equipment',
+            'utilities': 'Utilities',
+            'home_modification': 'Home modifications'
+        },
+        'cost_comparison': 'Cost Comparison',
+        'monthly_overview': 'Monthly Cost Overview',
+        'treatment_types': {
+            'hd': 'Hemodialysis (HD)',
+            'pd': 'Continuous Ambulatory Peritoneal Dialysis (CAPD)',
+            'apd': 'Automated Peritoneal Dialysis (APD)',
+            'ccc': 'Conservative Care (CCC)'
+        },
+        'see_details': 'See details',
+        'yearly_projections': 'Yearly Cost Projections',
+        'time_period': 'Time Period',
+        'year': 'year',
+        'years': 'years',
+        'start_over': 'Start Over',
+        'print': 'Print',
+        'notes': 'Notes',
+        'costs_may_vary': 'Costs may vary based on multiple factors, including location, disease severity, and response to treatment.',
+        'insurance_note': 'Displayed costs are estimates only and may differ from actual costs covered by your health insurance.',
+        'consult_note': 'Please consult your physician for advice tailored to your situation.'
+    }
+}

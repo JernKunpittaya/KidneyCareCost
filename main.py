@@ -235,7 +235,7 @@ try:
                 st.session_state.monthly_totals = monthly_totals
                 st.session_state.yearly_costs = yearly_costs
                 st.session_state.show_results = True
-    st.experimental_rerun()
+                st.experimental_rerun()
 
     if st.session_state.show_results:
         st.header(t['cost_comparison'])

@@ -56,3 +56,66 @@ def generate_report(answers, costs):
     pdf = buffer.getvalue()
     buffer.close()
     return pdf
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.utils import simpleSplit
+
+def generate_report(answers, costs):
+    """Generate a PDF report with the user's inputs and calculated costs"""
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+    
+    # Set up fonts
+    try:
+        pdfmetrics.registerFont(TTFont('THSarabun', 'assets/THSarabun.ttf'))
+        font = 'THSarabun'
+    except:
+        font = 'Helvetica'
+    
+    # Title
+    c.setFont(font, 24)
+    c.drawCentredString(width/2, height-50, "Kidney Dialysis Cost Report")
+    
+    # User information section
+    c.setFont(font, 12)
+    y = height-100
+    
+    c.drawString(50, y, "User Information:")
+    y -= 20
+    
+    for key, value in answers.items():
+        if y < 100:  # Check if we need a new page
+            c.showPage()
+            y = height-50
+        
+        text = f"{key}: {value}"
+        for line in simpleSplit(text, font, 12, width-100):
+            c.drawString(70, y, line)
+            y -= 15
+    
+    # Cost comparison section
+    y -= 30
+    c.drawString(50, y, "Monthly Cost Comparison:")
+    y -= 20
+    
+    for treatment, cost in costs.items():
+        c.drawString(70, y, f"{treatment.upper()}: ฿{cost:,.2f}")
+        y -= 15
+    
+    # Recommendations section
+    y -= 30
+    c.drawString(50, y, "Recommendations:")
+    y -= 20
+    
+    # Find least expensive option
+    least_expensive = min(costs, key=costs.get)
+    c.drawString(70, y, f"Based on your inputs, {least_expensive.upper()} appears to be the most economical option.")
+    
+    # Finalize PDF
+    c.save()
+    buffer.seek(0)
+    return buffer.getvalue()
