@@ -235,7 +235,7 @@ try:
                 st.session_state.monthly_totals = monthly_totals
                 st.session_state.yearly_costs = yearly_costs
                 st.session_state.show_results = True
-                st.experimental_rerun()
+                st.rerun()
 
     if st.session_state.show_results:
         st.header(t['cost_comparison'])
@@ -305,7 +305,7 @@ try:
         with cols[1]:
             if st.button(t['start_over']):
                 st.session_state.clear()
-                st.experimental_rerun()
+                st.rerun()
         with cols[2]:
             if st.button(t['print']):
                 st.balloons()
