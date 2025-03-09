@@ -8,7 +8,7 @@ deploymentTarget = "cloudrun"
 run = ["sh", "-c", "streamlit run main.py --server.address=0.0.0.0 --server.port=8501 --server.headless=true --server.enableCORS=false --server.enableWebsocketCompression=false"]
 
 [workflows]
-runButton = "Project"
+runButton = "Streamlit App"
 
 [[workflows.workflow]]
 name = "Project"
