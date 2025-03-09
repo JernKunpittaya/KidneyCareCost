@@ -37,11 +37,6 @@ try:
     # Title with enhanced styling
     st.markdown(f"<div class='main-header'><h1>{t['title']}</h1><p>{t['subtitle']}</p></div>", unsafe_allow_html=True)
 
-    # Add viewport meta tag for mobile responsiveness
-    st.markdown("""
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    """, unsafe_allow_html=True)
-    
     # Custom CSS for better experience and visual design
     st.markdown("""
         <style>
@@ -155,41 +150,12 @@ try:
         }
 
         /* Mobile responsiveness */
-        @media (max-width: 768px) {
+        @media (max-width: 640px) {
             .main > div {
-                padding: 0.8rem 0.4rem;
+                padding: 1rem 0.5rem;
             }
             .stMarkdown p {
                 font-size: 0.9rem;
-            }
-            .main-header {
-                padding: 1rem;
-                margin-bottom: 1rem;
-            }
-            h1 {
-                font-size: 1.6rem;
-            }
-            h2 {
-                font-size: 1.4rem;
-            }
-            h3 {
-                font-size: 1.2rem;
-            }
-            .section-container {
-                padding: 1rem;
-                margin-bottom: 0.7rem;
-            }
-            .treatment-card {
-                padding: 15px;
-                margin: 10px 0;
-            }
-            .dataframe th, .dataframe td {
-                padding: 8px 5px;
-                font-size: 0.9rem;
-            }
-            .stButton > button {
-                padding: 8px 12px;
-                width: 100%;
             }
         }
         </style>
@@ -362,19 +328,6 @@ try:
         # Monthly costs bar chart with enhanced colors and styling
         colors = ['#1e88e5', '#26a69a', '#7e57c2', '#ef5350']
 
-        # Check if the screen is mobile-sized
-        is_mobile = """
-            var width = window.innerWidth;
-            return width < 768;
-        """
-        mobile_view = st.experimental_get_query_params().get('mobile_view', ['false'])[0] == 'true'
-        
-        if not mobile_view:
-            try:
-                mobile_view = st.experimental_eval(is_mobile)
-            except:
-                mobile_view = False
-
         fig = go.Figure(data=[
             go.Bar(
                 x=[t['treatment_types'][k] for k in ['hd', 'pd', 'apd', 'ccc']],
@@ -386,7 +339,7 @@ try:
                 hoverinfo='y+text',
                 hoverlabel=dict(
                     bgcolor='white',
-                    font_size=16 if not mobile_view else 14,
+                    font_size=16,
                     font_family="Roboto"
                 )
             )
@@ -399,30 +352,30 @@ try:
                 'x':0.5,
                 'xanchor': 'center',
                 'yanchor': 'top',
-                'font': dict(size=22 if not mobile_view else 18, color='#2c3e50')
+                'font': dict(size=22, color='#2c3e50')
             },
             yaxis_title={
                 'text': 'Monthly Cost (THB)',
-                'font': dict(size=16 if not mobile_view else 14, color='#2c3e50')
+                'font': dict(size=16, color='#2c3e50')
             },
-            height=450 if not mobile_view else 350,
-            margin=dict(t=80 if not mobile_view else 60, b=20, l=20, r=20),
+            height=450,
+            margin=dict(t=80, b=20, l=20, r=20),
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
-            font=dict(family="Roboto", size=14 if not mobile_view else 12),
+            font=dict(family="Roboto"),
             xaxis=dict(
-                tickfont=dict(size=14 if not mobile_view else 12, color='#2c3e50'),
+                tickfont=dict(size=14, color='#2c3e50'),
                 gridcolor='#f8f9fa'
             ),
             yaxis=dict(
-                tickfont=dict(size=14 if not mobile_view else 12, color='#2c3e50'),
+                tickfont=dict(size=14, color='#2c3e50'),
                 gridcolor='#f8f9fa',
                 showgrid=True
             ),
             bargap=0.3,
             hoverlabel=dict(
                 bgcolor="white",
-                font_size=16 if not mobile_view else 14,
+                font_size=16,
                 font_family="Roboto"
             )
         )
@@ -438,22 +391,7 @@ try:
 
         # Detailed breakdown for each treatment with enhanced styling
         st.markdown(f"<div class='section-container'><h2>{t['monthly_overview']}</h2>", unsafe_allow_html=True)
-        
-        # Check if we're on mobile
-        is_mobile = """
-            var width = window.innerWidth;
-            return width < 768;
-        """
-        mobile_view = st.experimental_get_query_params().get('mobile_view', ['false'])[0] == 'true'
-        
-        if not mobile_view:
-            try:
-                mobile_view = st.experimental_eval(is_mobile)
-            except:
-                mobile_view = False
-        
-        # Use 2 columns on mobile, 4 on desktop
-        cols = st.columns(2 if mobile_view else 4)
+        cols = st.columns(4)
 
         treatment_colors = {
             'hd': '#1e88e5',  # Blue
@@ -462,23 +400,16 @@ try:
             'ccc': '#ef5350'  # Red
         }
 
-        # Define treatments
-        treatments = [('hd', 'HD'), ('pd', 'PD'), ('apd', 'APD'), ('ccc', 'CCC')]
-        
-        # Loop through treatments
-        for i, (treatment, label) in enumerate(treatments):
-            # For mobile: first row has 0,1 indices, second row has 2,3
-            col_index = i % 2 if mobile_view else i
-            
-            with cols[col_index]:
+        for i, (treatment, label) in enumerate([
+            ('hd', 'HD'), ('pd', 'PD'), ('apd', 'APD'), ('ccc', 'CCC')
+        ]):
+            with cols[i]:
                 # Custom styled card for each treatment
                 st.markdown(f"""
                 <div style='background-color: white; padding: 15px; border-radius: 8px; 
-                            border-top: 4px solid {treatment_colors[treatment]};
-                            margin-bottom: {15 if mobile_view and i < 2 else 0}px;'>
-                    <h3 style='color: {treatment_colors[treatment]}; margin-bottom: 10px; 
-                              font-size: {1.2 if mobile_view else 1.4}rem;'>{t['treatment_types'][treatment]}</h3>
-                    <div style='font-size: {1.3 if mobile_view else 1.5}rem; font-weight: 600; color: #2c3e50; margin-bottom: 5px;'>
+                            border-top: 4px solid {treatment_colors[treatment]};'>
+                    <h3 style='color: {treatment_colors[treatment]}; margin-bottom: 10px;'>{t['treatment_types'][treatment]}</h3>
+                    <div style='font-size: 1.5rem; font-weight: 600; color: #2c3e50; margin-bottom: 5px;'>
                         ฿{st.session_state.monthly_totals[treatment]:,}
                     </div>
                     <div style='font-size: 0.8rem; color: #7f8c8d;'>{t['per_month']}</div>
@@ -489,10 +420,6 @@ try:
                     for item, cost in st.session_state.detailed_costs[treatment].items():
                         if cost > 0:
                             st.markdown(f"{item}: <div class='cost-value'>฿{int(cost):,}</div>", unsafe_allow_html=True)
-            
-            # For mobile: create a new row after every 2 items
-            if mobile_view and i == 1:
-                st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)  # Close the section container
 
@@ -508,30 +435,16 @@ try:
             'CCC': [f"฿{st.session_state.yearly_costs['ccc'][k]:,}" for k in ['1_year', '5_years', '10_years']]
         })
 
-        # Check if mobile view again
-        is_mobile = """
-            var width = window.innerWidth;
-            return width < 768;
-        """
-        mobile_view = st.experimental_get_query_params().get('mobile_view', ['false'])[0] == 'true'
-        
-        if not mobile_view:
-            try:
-                mobile_view = st.experimental_eval(is_mobile)
-            except:
-                mobile_view = False
-                
-        # Create custom HTML for better styling with mobile optimization
+        # Create custom HTML for better styling
         html_table = f"""
-        <div class="table-responsive" style="width: 100%; overflow-x: auto;">
-        <table class="dataframe" style="width: 100%; min-width: {300 if mobile_view else 600}px;">
+        <table class="dataframe">
             <thead>
                 <tr>
-                    <th style="min-width: 70px;">{t['time_period']}</th>
-                    <th style="background-color: #1e88e5; min-width: 70px;">HD</th>
-                    <th style="background-color: #26a69a; min-width: 70px;">PD</th>
-                    <th style="background-color: #7e57c2; min-width: 70px;">APD</th>
-                    <th style="background-color: #ef5350; min-width: 70px;">CCC</th>
+                    <th>{t['time_period']}</th>
+                    <th style="background-color: #1e88e5;">HD</th>
+                    <th style="background-color: #26a69a;">PD</th>
+                    <th style="background-color: #7e57c2;">APD</th>
+                    <th style="background-color: #ef5350;">CCC</th>
                 </tr>
             </thead>
             <tbody>
@@ -549,7 +462,6 @@ try:
         html_table += """
             </tbody>
         </table>
-        </div>
         </div>
         """
 
