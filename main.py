@@ -1,44 +1,49 @@
 import sys
+import logging
 import streamlit as st
+import pandas as pd
 
-# Add debug information
-st.write("Debug: Starting application...")
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 try:
-    # Set page config
+    # This must be the first Streamlit command
     st.set_page_config(
         page_title="Kidney Dialysis Cost Calculator",
         page_icon="💉",
         layout="wide"
     )
-    st.write("Debug: Page config set successfully")
 
-    # Simple title and description
+    # Basic title
     st.title("Kidney Dialysis Cost Calculator")
-    st.markdown("Welcome to the cost calculator")
-    st.write("Debug: Basic UI elements loaded")
 
-    # Test form with error handling
-    try:
-        with st.form("test_form"):
-            st.write("Basic Information")
-            name = st.text_input("Enter your name")
-            age = st.number_input("Enter your age", min_value=0, max_value=120)
-            submitted = st.form_submit_button("Submit")
-            st.write("Debug: Form created successfully")
+    # Simple test table
+    data = {
+        'Treatment': ['HD', 'PD', 'APD'],
+        'Cost (THB)': [30000, 25000, 35000]
+    }
+    df = pd.DataFrame(data)
 
-        if submitted:
-            st.success(f"Form submitted for {name}, age {age}")
-            st.info("Test message to verify form processing")
-            st.write("Debug: Form processed successfully")
+    # CSS for right alignment
+    st.markdown("""
+    <style>
+    .dataframe td:nth-child(2) {
+        text-align: right !important;
+        font-family: monospace;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-    except Exception as form_error:
-        st.error(f"Form error: {str(form_error)}")
-        st.write(f"Debug: Form error details - {type(form_error).__name__}")
+    # Format the cost column with thousand separators and ฿ symbol
+    df['Cost (THB)'] = df['Cost (THB)'].apply(lambda x: f'฿{x:,.0f}')
+
+    # Display the table
+    st.table(df)
+
+    logger.info("Application loaded successfully")
 
 except Exception as e:
+    logger.error(f"Application error: {str(e)}")
     st.error(f"Application error: {str(e)}")
-    st.write(f"Debug: Error type - {type(e).__name__}")
     sys.exit(1)
-
-st.write("Debug: Application loaded completely")
