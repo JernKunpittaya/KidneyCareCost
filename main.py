@@ -115,18 +115,18 @@ try:
 
         /* Cost breakdown styling */
         .cost-breakdown {
-            background-color: var(--light-gray);
             border-radius: var(--border-radius);
-            padding: 12px;
+            padding: 10px 0;
             margin-top: 10px;
+            border: 1px solid #e0e0e0;
         }
         
         .cost-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
         }
         
         .cost-item:last-child {
@@ -147,6 +147,8 @@ try:
             color: var(--primary-color); /* Use variable for consistency */
             font-weight: 600;
             margin-left: 10px;
+            min-width: 80px;
+            text-align: center;
         }
 
         /* Streamlit table cell alignment */
@@ -173,13 +175,29 @@ try:
             transition: all 0.3s ease;
         }
 
-        /* Mobile responsiveness */
+        /* Responsive design - desktop and mobile */
+        @media (min-width: 992px) {
+            .cost-item {
+                padding: 12px 20px;
+            }
+            .cost-value {
+                min-width: 100px;
+            }
+            .cost-breakdown {
+                max-width: 90%;
+                margin: 10px auto;
+            }
+        }
+        
         @media (max-width: 640px) {
             .main > div {
                 padding: 1rem 0.5rem;
             }
             .stMarkdown p {
                 font-size: 0.9rem;
+            }
+            .cost-item {
+                padding: 10px 12px;
             }
         }
         </style>
