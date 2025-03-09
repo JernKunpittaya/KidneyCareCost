@@ -291,6 +291,7 @@ TRANSLATIONS = {
         'start_over': 'เริ่มใหม่',
         'print': 'พิมพ์',
         'notes': 'หมายเหตุ',
+        'per_month': 'ต่อเดือน',
         'costs_may_vary': 'ค่าใช้จ่ายอาจแตกต่างกันไปขึ้นอยู่กับปัจจัยหลายประการ รวมถึงสถานที่ ความรุนแรงของโรค และการตอบสนองต่อการรักษา',
         'insurance_note': 'ค่าใช้จ่ายที่แสดงเป็นการประมาณการเท่านั้น และอาจแตกต่างจากค่าใช้จ่ายจริงที่ครอบคลุมโดยประกันสุขภาพของคุณ',
         'consult_note': 'โปรดปรึกษาแพทย์เพื่อรับคำแนะนำที่เหมาะสมกับสถานการณ์ของคุณ'
@@ -365,6 +366,7 @@ TRANSLATIONS = {
         'start_over': 'Start Over',
         'print': 'Print',
         'notes': 'Notes',
+        'per_month': 'per month',
         'costs_may_vary': 'Costs may vary based on multiple factors, including location, disease severity, and response to treatment.',
         'insurance_note': 'Displayed costs are estimates only and may differ from actual costs covered by your health insurance.',
         'consult_note': 'Please consult your physician for advice tailored to your situation.'
