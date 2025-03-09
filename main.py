@@ -34,36 +34,110 @@ try:
     # Get translations
     t = TRANSLATIONS[st.session_state.language]
 
-    # Title
-    st.title(t['title'])
-    st.markdown(t['subtitle'])
+    # Title with enhanced styling
+    st.markdown(f"<div class='main-header'><h1>{t['title']}</h1><p>{t['subtitle']}</p></div>", unsafe_allow_html=True)
 
-    # Custom CSS for better mobile experience and table formatting
+    # Custom CSS for better experience and visual design
     st.markdown("""
         <style>
+        /* Import Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono&display=swap');
+        
+        /* General styling */
+        .main {
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        /* Header styling */
+        .main-header {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 5px solid #1e88e5;
+        }
+        
+        /* Section styling */
+        .section-container {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        
         /* General table alignment */
         .table-right td:not(:first-child) {
             text-align: right !important;
         }
 
         /* DataFrame styling */
+        .dataframe {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .dataframe th {
+            background-color: #1e88e5;
+            color: white;
+            padding: 12px;
+            text-align: left !important;
+        }
+        
+        .dataframe td {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
         .dataframe td:not(:first-child) {
             text-align: right !important;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        .dataframe tr:nth-child(even) {
+            background-color: #f8f9fa;
         }
 
         /* Cost value alignment */
         .cost-value {
             text-align: right !important;
-            font-family: monospace;
+            font-family: 'Roboto Mono', monospace;
             float: right;
-            padding-left: 10px;
+            padding: 5px 10px;
+            background-color: rgba(30, 136, 229, 0.1);
+            border-radius: 4px;
+            color: #1e88e5;
+            font-weight: 600;
         }
 
         /* Streamlit table cell alignment */
         [data-testid="stTable"] table td:not(:first-child) {
             text-align: right !important;
         }
-
+        
+        /* Form styling */
+        .stForm > div {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        /* Treatment cards */
+        .treatment-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin: 15px 0;
+            border-top: 4px solid #1e88e5;
+            transition: all 0.3s ease;
+        }
+        
         /* Mobile responsiveness */
         @media (max-width: 640px) {
             .main > div {
@@ -240,44 +314,106 @@ try:
     if st.session_state.show_results:
         st.header(t['cost_comparison'])
 
-        # Monthly costs bar chart
+        # Monthly costs bar chart with enhanced colors and styling
+        colors = ['#1e88e5', '#26a69a', '#7e57c2', '#ef5350']
+        
         fig = go.Figure(data=[
             go.Bar(
                 x=[t['treatment_types'][k] for k in ['hd', 'pd', 'apd', 'ccc']],
                 y=[st.session_state.monthly_totals[k] for k in ['hd', 'pd', 'apd', 'ccc']],
                 text=[f"฿{cost:,.0f}" for cost in [st.session_state.monthly_totals[k] for k in ['hd', 'pd', 'apd', 'ccc']]],
                 textposition='auto',
+                marker_color=colors,
+                marker_line_width=0,
+                hoverinfo='y+text',
+                hoverlabel=dict(
+                    bgcolor='white',
+                    font_size=16,
+                    font_family="Roboto"
+                )
             )
         ])
 
         fig.update_layout(
-            title=t['monthly_overview'],
-            yaxis_title='Monthly Cost (THB)',
-            height=400,
-            margin=dict(t=50, b=0, l=0, r=0),
+            title={
+                'text': t['monthly_overview'],
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top',
+                'font': dict(size=22, color='#2c3e50')
+            },
+            yaxis_title={
+                'text': 'Monthly Cost (THB)',
+                'font': dict(size=16, color='#2c3e50')
+            },
+            height=450,
+            margin=dict(t=80, b=20, l=20, r=20),
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(family="Roboto"),
+            xaxis=dict(
+                tickfont=dict(size=14, color='#2c3e50'),
+                gridcolor='#f8f9fa'
+            ),
+            yaxis=dict(
+                tickfont=dict(size=14, color='#2c3e50'),
+                gridcolor='#f8f9fa',
+                showgrid=True
+            ),
+            bargap=0.3,
+            hoverlabel=dict(
+                bgcolor="white",
+                font_size=16,
+                font_family="Roboto"
+            )
         )
-
+        
+        # Add shadow effect to the chart container
+        st.markdown("""
+        <div style="background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+        """, unsafe_allow_html=True)
+        
         st.plotly_chart(fig, use_container_width=True)
+        
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        # Detailed breakdown for each treatment
-        st.subheader(t['monthly_overview'])
+        # Detailed breakdown for each treatment with enhanced styling
+        st.markdown(f"<h2 class='section-title'>{t['monthly_overview']}</h2>", unsafe_allow_html=True)
         cols = st.columns(4)
+
+        treatment_colors = {
+            'hd': '#1e88e5',  # Blue
+            'pd': '#26a69a',  # Teal
+            'apd': '#7e57c2', # Purple
+            'ccc': '#ef5350'  # Red
+        }
 
         for i, (treatment, label) in enumerate([
             ('hd', 'HD'), ('pd', 'PD'), ('apd', 'APD'), ('ccc', 'CCC')
         ]):
             with cols[i]:
-                st.metric(t['treatment_types'][treatment],
-                         f"฿{st.session_state.monthly_totals[treatment]:,.2f}")
+                # Custom styled card for each treatment
+                st.markdown(f"""
+                <div style='background-color: white; padding: 15px; border-radius: 8px; 
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-top: 4px solid {treatment_colors[treatment]};'>
+                    <h3 style='color: {treatment_colors[treatment]}; margin-bottom: 10px;'>{t['treatment_types'][treatment]}</h3>
+                    <div style='font-size: 1.5rem; font-weight: 600; color: #2c3e50; margin-bottom: 5px;'>
+                        ฿{st.session_state.monthly_totals[treatment]:,.2f}
+                    </div>
+                    <div style='font-size: 0.8rem; color: #7f8c8d;'>{t['per_month']}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                
                 with st.expander(t['see_details']):
                     for item, cost in st.session_state.detailed_costs[treatment].items():
                         if cost > 0:
                             st.markdown(f"{item}: <div class='cost-value'>฿{cost:,.2f}</div>", unsafe_allow_html=True)
 
-        # Yearly projections
-        st.subheader(t['yearly_projections'])
+        # Yearly projections with enhanced styling
+        st.markdown(f"<div class='section-container'><h2>{t['yearly_projections']}</h2>", unsafe_allow_html=True)
+        
+        # Create dataframe for projections
         projections_df = pd.DataFrame({
             t['time_period']: [f"1 {t['year']}", f"5 {t['years']}", f"10 {t['years']}"],
             'HD': [f"฿{st.session_state.yearly_costs['hd'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']],
@@ -286,19 +422,37 @@ try:
             'CCC': [f"฿{st.session_state.yearly_costs['ccc'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']]
         })
 
-        # Create a styled table with right-aligned numeric columns
-        st.markdown("""
-        <style>
-        .right-aligned {
-            text-align: right !important;
-            font-family: monospace;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
-        # Convert DataFrame to HTML with custom styling
-        table_html = projections_df.to_html(classes=['right-aligned'], escape=False, index=False)
-        st.markdown(table_html, unsafe_allow_html=True)
+        # Create custom HTML for better styling
+        html_table = f"""
+        <table class="dataframe">
+            <thead>
+                <tr>
+                    <th>{t['time_period']}</th>
+                    <th style="background-color: #1e88e5;">HD</th>
+                    <th style="background-color: #26a69a;">PD</th>
+                    <th style="background-color: #7e57c2;">APD</th>
+                    <th style="background-color: #ef5350;">CCC</th>
+                </tr>
+            </thead>
+            <tbody>
+        """
+        
+        for i, row in projections_df.iterrows():
+            html_table += "<tr>"
+            html_table += f"<td>{row[t['time_period']]}</td>"
+            html_table += f"<td>{row['HD']}</td>"
+            html_table += f"<td>{row['PD']}</td>"
+            html_table += f"<td>{row['APD']}</td>"
+            html_table += f"<td>{row['CCC']}</td>"
+            html_table += "</tr>"
+            
+        html_table += """
+            </tbody>
+        </table>
+        </div>
+        """
+        
+        st.markdown(html_table, unsafe_allow_html=True)
 
         # Action buttons
         cols = st.columns([4, 1, 1])
