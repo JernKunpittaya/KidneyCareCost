@@ -77,7 +77,7 @@ TRANSLATIONS = {
             'caregiver': 'ค่าผู้ดูแล',
             'accommodation': 'ค่าที่พัก',
             'home_modification': 'ค่าปรับปรุงบ้าน',
-            'insurance_copay': 'ค่าใช้จ่ายพื้นฐาน'
+            'insurance_copay': 'ค่ารักษาพื้นฐาน'
         },
 
         'treatment_types': {
