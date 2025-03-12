@@ -713,37 +713,14 @@ try:
         </table>
         """
         
-        # Print button script for the yearly projection table
-        html_table += f"""
-        <script>
-        function printProjections() {{
-          const projectionTable = document.querySelector('.dataframe').outerHTML;
-          const title = "<h2 style='text-align:center;'>{t['yearly_projections']}</h2>";
-          const printWindow = window.open('', '_blank');
-          printWindow.document.write('<html><head><title>{t['yearly_projections']}</title>');
-          printWindow.document.write('<style>body {{ font-family: Arial, sans-serif; }} table {{ width: 100%; border-collapse: collapse; }} th {{ background-color: #1e88e5; color: white; text-align: left; padding: 12px; }} td {{ padding: 10px; border-bottom: 1px solid #ddd; }} tr:nth-child(even) {{ background-color: #f2f2f2; }}</style>');
-          printWindow.document.write('</head><body>');
-          printWindow.document.write(title);
-          printWindow.document.write(projectionTable);
-          printWindow.document.write('</body></html>');
-          printWindow.document.close();
-          printWindow.print();
-        }}
-        </script>
-        </div>
-        """
+        html_table += "</div>"
 
         st.markdown(html_table, unsafe_allow_html=True)
 
-        # Action buttons for print and start over
+        # Action buttons for start over
         st.markdown("<div class='section-container'>", unsafe_allow_html=True)
         cols = st.columns([1, 3, 1])
         with cols[1]:
-            # Print yearly projections button
-            st.markdown(f"""
-            <button onclick="printProjections()" style="width: 100%; margin-bottom: 15px; padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">{t['print']}</button>
-            """, unsafe_allow_html=True)
-            
             # Create a more prominent Start Over button with confirmation dialog
             start_over_clicked = st.button(
                 t['start_over'], 
