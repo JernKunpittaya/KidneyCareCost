@@ -722,26 +722,39 @@ try:
         cols = st.columns([1, 3, 1])
         with cols[1]:
             # Create a more prominent Start Over button with confirmation dialog
-            start_over_clicked = st.button(
-                t['start_over'], 
-                use_container_width=True,
-                key="start_over_button",
-                help="This will reset all your inputs and calculations"
-            )
-            
-            # Add confirmation dialog for Start Over
-            if start_over_clicked:
+            # First, check if we're in confirmation mode
+            if 'confirm_reset' not in st.session_state:
+                st.session_state.confirm_reset = False
+                
+            # Show the start over button if not in confirmation mode
+            if not st.session_state.confirm_reset:
+                start_over_clicked = st.button(
+                    t['start_over'], 
+                    use_container_width=True,
+                    key="start_over_button",
+                    help="This will reset all your inputs and calculations"
+                )
+                
+                # Enter confirmation mode if clicked
+                if start_over_clicked:
+                    st.session_state.confirm_reset = True
+                    st.rerun()
+            else:
+                # Show confirmation warning and buttons
                 confirm = st.warning(
                     f"⚠️ {t['confirm_reset']}", 
                     icon="⚠️"
                 )
                 confirm_cols = st.columns([1, 1])
                 with confirm_cols[0]:
-                    if st.button(f"✅ {t.get('yes_start_over', 'Yes, start over')}", use_container_width=True):
-                        st.session_state.clear()
+                    if st.button(f"✅ {t.get('yes_start_over', 'Yes, start over')}", use_container_width=True, key="confirm_yes"):
+                        # Reset all session state
+                        for key in list(st.session_state.keys()):
+                            del st.session_state[key]
                         st.rerun()
                 with confirm_cols[1]:
-                    if st.button(f"❌ {t.get('no_cancel', 'No, cancel')}", use_container_width=True):
+                    if st.button(f"❌ {t.get('no_cancel', 'No, cancel')}", use_container_width=True, key="confirm_no"):
+                        st.session_state.confirm_reset = False
                         st.rerun()
                         
         st.markdown("</div>", unsafe_allow_html=True)
