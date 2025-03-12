@@ -737,11 +737,11 @@ try:
                 )
                 confirm_cols = st.columns([1, 1])
                 with confirm_cols[0]:
-                    if st.button("✅ Yes, start over", use_container_width=True):
+                    if st.button(f"✅ {t.get('yes_start_over', 'Yes, start over')}", use_container_width=True):
                         st.session_state.clear()
                         st.rerun()
                 with confirm_cols[1]:
-                    if st.button("❌ No, cancel", use_container_width=True):
+                    if st.button(f"❌ {t.get('no_cancel', 'No, cancel')}", use_container_width=True):
                         st.rerun()
                         
         st.markdown("</div>", unsafe_allow_html=True)

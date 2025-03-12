@@ -93,6 +93,8 @@ TRANSLATIONS = {
         'see_details': 'ดูรายละเอียด',
         'start_over': 'เริ่มใหม่',
         'confirm_reset': 'คุณแน่ใจหรือไม่ว่าต้องการเริ่มใหม่? ข้อมูลทั้งหมดจะหายไป',
+        'yes_start_over': 'ใช่, เริ่มใหม่',
+        'no_cancel': 'ไม่, ยกเลิก',
 
         'notes': 'หมายเหตุ',
         'costs_may_vary': 'ค่าใช้จ่ายอาจแตกต่างกันไปขึ้นอยู่กับปัจจัยหลายประการ รวมถึงสถานที่ ความรุนแรงของโรค และการตอบสนองต่อการรักษา',
@@ -204,6 +206,8 @@ TRANSLATIONS = {
         'see_details': 'See details',
         'start_over': 'Start Over',
         'confirm_reset': 'Are you sure you want to start over? All your data will be lost.',
+        'yes_start_over': 'Yes, start over',
+        'no_cancel': 'No, cancel',
         
         'notes': 'Notes',
         'costs_may_vary': 'Costs may vary based on multiple factors, including location, disease severity, and response to treatment.',
