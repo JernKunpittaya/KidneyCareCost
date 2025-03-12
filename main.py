@@ -1,6 +1,7 @@
 import os
 import sys
 import streamlit as st
+import streamlit.components.v1 as components
 
 # Set page config first, before any other Streamlit commands
 try:
@@ -728,8 +729,8 @@ try:
                 st.rerun()
         with cols[2]:
             if st.button(t['print'], use_container_width=True):
-                # Create a PDF-like view that's optimized for printing
-                st.markdown("""
+                # Direct print trigger without relying on JavaScript events
+                html_content = """
                 <style>
                 @media print {
                     /* Hide Streamlit elements when printing */
@@ -750,41 +751,18 @@ try:
                     }
                 }
                 </style>
-                """, unsafe_allow_html=True)
                 
-                # Create a dedicated button that triggers printing using JavaScript
-                st.markdown("""
-                <div style="display: flex; justify-content: center; margin: 20px 0;">
-                    <button 
-                        onclick="window.print()" 
-                        style="
-                            background-color: #1e88e5; 
-                            color: white; 
-                            border: none; 
-                            padding: 10px 20px; 
-                            border-radius: 4px;
-                            font-size: 16px;
-                            cursor: pointer;
-                        "
-                    >
-                        Click here to print this page
-                    </button>
-                </div>
                 <script>
-                    // Add a listener to ensure the button is properly initialized
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const printButtons = document.querySelectorAll('button');
-                        printButtons.forEach(button => {
-                            if (button.textContent.includes('print this page')) {
-                                button.addEventListener('click', function(e) {
-                                    e.preventDefault();
-                                    window.print();
-                                });
-                            }
-                        });
-                    });
+                    // Execute print directly
+                    window.print();
                 </script>
-                """, unsafe_allow_html=True)
+                """
+                
+                components_iframe = components.html(
+                    html_content,
+                    height=0,
+                    scrolling=False
+                )
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Footer notes
