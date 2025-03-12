@@ -553,22 +553,25 @@ try:
                     for treatment, costs in detailed_costs.items()
                 }
 
-                # Separate one-off costs from monthly costs
-                one_off_costs = {
-                    treatment: sum([cost for item, cost in costs.items() 
-                                   if 'modification' in item.lower() or 'home modification' in item.lower()])
-                    for treatment, costs in detailed_costs.items()
-                }
+                # Identify one-off costs but keep them separate from monthly calculations
+                one_off_costs = {}
+                for treatment, costs in detailed_costs.items():
+                    one_off_costs[treatment] = 0
+                    for item, cost in list(costs.items()):
+                        is_one_off = 'modification' in item.lower() or 'ค่าปรับปรุงบ้าน' in item.lower() or 'home modification' in item.lower()
+                        if is_one_off:
+                            one_off_costs[treatment] += cost
                 
-                # Recalculate monthly totals without one-off costs
-                monthly_recurring = {
-                    treatment: monthly_totals[treatment] - one_off_costs[treatment]
-                    for treatment in monthly_totals.keys()
-                }
+                # Keep original monthly totals for display but calculate recurring costs for yearly projections
+                monthly_recurring = {}
+                for treatment in monthly_totals.keys():
+                    # For yearly calculations, we exclude one-off costs from the monthly multiplication
+                    monthly_recurring[treatment] = monthly_totals[treatment] - one_off_costs[treatment]
                 
                 # Calculate yearly projections (one-off costs added just once)
                 yearly_costs = {}
-                for treatment, monthly_cost in monthly_recurring.items():
+                for treatment in monthly_totals.keys():
+                    monthly_cost = monthly_recurring[treatment]
                     one_off = one_off_costs[treatment]
                     yearly_costs[treatment] = {
                         '1_year': int(monthly_cost * 12 + one_off),
@@ -682,7 +685,7 @@ try:
                     for item, cost in st.session_state.detailed_costs[treatment].items():
                         if cost > 0:
                             # Check if this is a one-off cost (home modification)
-                            is_one_off = 'modification' in item.lower() or 'ค่าปรับปรุงบ้าน' in item
+                            is_one_off = 'modification' in item.lower() or 'ค่าปรับปรุงบ้าน' in item.lower() or 'home modification' in item.lower()
                             
                             # Add a label for one-off costs
                             one_off_label = f" <span style='color:#e74c3c;font-size:0.8rem;'>({t.get('one_time_cost', 'One-time cost')})</span>" if is_one_off else ""
