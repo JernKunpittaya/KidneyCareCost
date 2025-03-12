@@ -681,7 +681,13 @@ try:
                     st.markdown("<div class='cost-breakdown'>", unsafe_allow_html=True)
                     for item, cost in st.session_state.detailed_costs[treatment].items():
                         if cost > 0:
-                            st.markdown(f"• {item}: <b>฿{int(cost):,}</b>", unsafe_allow_html=True)
+                            # Check if this is a one-off cost (home modification)
+                            is_one_off = 'modification' in item.lower() or 'ค่าปรับปรุงบ้าน' in item
+                            
+                            # Add a label for one-off costs
+                            one_off_label = f" <span style='color:#e74c3c;font-size:0.8rem;'>({t.get('one_time_cost', 'One-time cost')})</span>" if is_one_off else ""
+                            
+                            st.markdown(f"• {item}: <b>฿{int(cost):,}</b>{one_off_label}", unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)  # Close the section container
