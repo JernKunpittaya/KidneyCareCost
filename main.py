@@ -728,12 +728,12 @@ try:
                 st.rerun()
         with cols[2]:
             if st.button(t['print'], use_container_width=True):
-                # Create a printable version with CSS for print media
+                # Create a PDF-like view that's optimized for printing
                 st.markdown("""
                 <style>
                 @media print {
                     /* Hide Streamlit elements when printing */
-                    header, footer, .stButton, .stSidebar, iframe, .viewerBadge {
+                    header, footer, .stButton, .stSidebar, iframe, .viewerBadge, [data-testid="stToolbar"] {
                         display: none !important;
                     }
                     
@@ -750,42 +750,39 @@ try:
                     }
                 }
                 </style>
+                """, unsafe_allow_html=True)
                 
+                # Create a dedicated button that triggers printing using JavaScript
+                st.markdown("""
+                <div style="display: flex; justify-content: center; margin: 20px 0;">
+                    <button 
+                        onclick="window.print()" 
+                        style="
+                            background-color: #1e88e5; 
+                            color: white; 
+                            border: none; 
+                            padding: 10px 20px; 
+                            border-radius: 4px;
+                            font-size: 16px;
+                            cursor: pointer;
+                        "
+                    >
+                        Click here to print this page
+                    </button>
+                </div>
                 <script>
-                    // More robust print function that works in iframes
-                    function printContent() {
-                        try {
-                            window.print();
-                        } catch (e) {
-                            console.error("Print failed:", e);
-                            // Fallback - open in new window
-                            const content = document.querySelector('.main .block-container').innerHTML;
-                            const printWindow = window.open('', '_blank');
-                            printWindow.document.write(`
-                                <html>
-                                <head>
-                                    <title>Print Report</title>
-                                    <style>
-                                        body { font-family: Arial, sans-serif; padding: 20px; }
-                                        table { border-collapse: collapse; width: 100%; }
-                                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                                        th { background-color: #f2f2f2; }
-                                    </style>
-                                </head>
-                                <body>
-                                    ${content}
-                                </body>
-                                </html>
-                            `);
-                            printWindow.document.close();
-                            printWindow.focus();
-                            printWindow.print();
-                            printWindow.close();
-                        }
-                    }
-                    
-                    // Execute after a short delay to ensure content is loaded
-                    setTimeout(printContent, 500);
+                    // Add a listener to ensure the button is properly initialized
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const printButtons = document.querySelectorAll('button');
+                        printButtons.forEach(button => {
+                            if (button.textContent.includes('print this page')) {
+                                button.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    window.print();
+                                });
+                            }
+                        });
+                    });
                 </script>
                 """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
