@@ -638,8 +638,6 @@ try:
 
         # Detailed breakdown for each treatment with enhanced styling
         st.markdown(f"<div class='section-container'><h2>{t['monthly_overview']}</h2>", unsafe_allow_html=True)
-        # Add description about data sources
-        st.markdown(f"<p style='margin-bottom: 20px;'>{t.get('cost_data_source', 'This is the average cost from our research data from hospitals in Thailand.')}</p>", unsafe_allow_html=True)
         cols = st.columns(4)
 
         treatment_colors = {
