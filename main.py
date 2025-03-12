@@ -725,59 +725,33 @@ try:
 
         st.markdown(html_table, unsafe_allow_html=True)
 
-        # Action buttons
+        # Action buttons with confirmation for Start Over
         st.markdown("<div class='section-container'>", unsafe_allow_html=True)
-        cols = st.columns([4, 1, 1])
+        cols = st.columns([1, 3, 1])
         with cols[1]:
-            if st.button(t['start_over'], use_container_width=True):
-                st.session_state.clear()
-                st.rerun()
-        with cols[2]:
-            if st.button(t['print'], use_container_width=True):
-                # Create a better print functionality with iframe
-                st.markdown("""
-                <iframe name="print_frame" style="display:none;"></iframe>
-                <style>
-                @media print {
-                    /* Hide Streamlit elements when printing */
-                    header, footer, .stButton, .stSidebar, iframe, .viewerBadge, [data-testid="stToolbar"] {
-                        display: none !important;
-                    }
-                    
-                    /* Ensure content is visible */
-                    .main .block-container {
-                        max-width: 100% !important;
-                        padding: 0 !important;
-                    }
-                    
-                    /* Make text visible on white background */
-                    * {
-                        color: black !important;
-                        background-color: white !important;
-                    }
-                }
-                </style>
-                """, unsafe_allow_html=True)
-                
-                # Add a direct print button that's more reliable
-                st.markdown("""
-                <div style="text-align: center; margin-top: 20px;">
-                    <button 
-                        onclick="window.print()" 
-                        style="
-                            background-color: #1e88e5; 
-                            color: white; 
-                            border: none; 
-                            padding: 10px 20px; 
-                            border-radius: 4px;
-                            font-size: 16px;
-                            cursor: pointer;
-                        "
-                    >
-                        Click here to print this report
-                    </button>
-                </div>
-                """, unsafe_allow_html=True)
+            # Create a more prominent button with confirmation dialog
+            start_over_clicked = st.button(
+                t['start_over'], 
+                use_container_width=True,
+                key="start_over_button",
+                help="This will reset all your inputs and calculations"
+            )
+            
+            # Add confirmation dialog for Start Over
+            if start_over_clicked:
+                confirm = st.warning(
+                    f"⚠️ {t.get('confirm_reset', 'Are you sure you want to start over? All your data will be lost.')}", 
+                    icon="⚠️"
+                )
+                confirm_cols = st.columns([1, 1])
+                with confirm_cols[0]:
+                    if st.button("✅ Yes, start over", use_container_width=True):
+                        st.session_state.clear()
+                        st.rerun()
+                with confirm_cols[1]:
+                    if st.button("❌ No, cancel", use_container_width=True):
+                        st.rerun()
+                        
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Footer notes
