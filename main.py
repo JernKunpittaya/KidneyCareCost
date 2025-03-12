@@ -456,16 +456,9 @@ try:
                 if food_cost > 0:
                     hd_costs['ค่าอาหาร/เครื่องดื่ม/ขนม'] = food_cost * visits_per_month
                 
-                # Income effects - only if employed
-                if employment != t['yes']:
-                    hd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย', None)
-                elif work_impact == t['no_income_effect']:
-                    hd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย', None)
-                elif monthly_income > 0:
-                    if work_impact == t['leave_job']:
-                        hd_costs['รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย'] = monthly_income
-                    elif work_impact == t['work_during_dialysis']:
-                        hd_costs['รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย'] = monthly_income * 0.3  # 30% income loss
+                # No income effects - Opportunity costs are removed
+                hd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย', None)
+                hd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของญาติ', None)
                 
                 # Add insurance coverage effects
                 if coverage_factor > 0:
@@ -483,10 +476,9 @@ try:
                 if caregiver_type != t['hired_caregiver']:
                     pd_costs.pop('ค่าจ้างผู้ดูแล', None)
                 
-                # Income effects
-                if employment != t['yes']:
-                    pd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย', None)
-                    pd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของญาติ', None)
+                # No income effects - Opportunity costs are removed
+                pd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย', None)
+                pd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของญาติ', None)
                 
                 # Home modification costs for PD
                 pd_one_off = get_one_off_costs('pd')
@@ -511,10 +503,9 @@ try:
                 if caregiver_type != t['hired_caregiver']:
                     apd_costs.pop('ค่าจ้างผู้ดูแล', None)
                 
-                # Income effects
-                if employment != t['yes']:
-                    apd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย', None)
-                    apd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของญาติ', None)
+                # No income effects - Opportunity costs are removed
+                apd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย', None)
+                apd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของญาติ', None)
                 
                 # Home modification costs for APD
                 apd_one_off = get_one_off_costs('apd')

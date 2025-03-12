@@ -40,7 +40,7 @@ COST_DATA = {
 }
 
 # Helper functions to get costs by type
-def get_monthly_costs(treatment_type, include_opportunity=True, include_maintenance=True, include_complication=True):
+def get_monthly_costs(treatment_type, include_opportunity=False, include_maintenance=True, include_complication=True):
     """Get all monthly costs for a specific treatment type"""
     monthly_costs = {}
 
@@ -51,8 +51,8 @@ def get_monthly_costs(treatment_type, include_opportunity=True, include_maintena
         if details['frequency'] != 'Monthly':
             continue
 
-        # Filter by type if requested
-        if not include_opportunity and details['type'] == 'Opportunity':
+        # Skip Opportunity costs completely
+        if details['type'] == 'Opportunity':
             continue
 
         # Filter by category if requested
