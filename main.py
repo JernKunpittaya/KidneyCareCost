@@ -27,44 +27,41 @@ try:
     if 'answers' not in st.session_state:
         st.session_state.answers = {}
 
-    st.write("Debug: App initialized successfully")
-
     # Language selector
-    col1, col2 = st.columns([2, 10])
-    with col1:
-        language = st.selectbox(
-            '🌐 Language / ภาษา',
-            ['ไทย', 'English'],
-            index=0 if st.session_state.language == 'th' else 1
-        )
-        st.session_state.language = 'th' if language == 'ไทย' else 'en'
-
-    st.write(f"Debug: Selected language: {st.session_state.language}")
+    language = st.selectbox('🌐 Language / ภาษา', ['ไทย', 'English'])
+    st.session_state.language = 'th' if language == 'ไทย' else 'en'
 
     # Get translations
     t = TRANSLATIONS[st.session_state.language]
 
-    # Basic UI
+    # Title
     st.title(t['title'])
     st.markdown(t['subtitle'])
 
     # Custom CSS for better mobile experience and table formatting
     st.markdown("""
         <style>
-        /* Table alignment */
-        .table-right td:not(:first-child),
-        .dataframe td:not(:first-child),
-        [data-testid="stTable"] table td:not(:first-child) {
+        /* General table alignment */
+        .table-right td:not(:first-child) {
             text-align: right !important;
-            font-family: 'Roboto Mono', monospace;
         }
 
-        /* Cost values */
+        /* DataFrame styling */
+        .dataframe td:not(:first-child) {
+            text-align: right !important;
+        }
+
+        /* Cost value alignment */
         .cost-value {
             text-align: right !important;
-            font-family: 'Roboto Mono', monospace;
+            font-family: monospace;
             float: right;
             padding-left: 10px;
+        }
+
+        /* Streamlit table cell alignment */
+        [data-testid="stTable"] table td:not(:first-child) {
+            text-align: right !important;
         }
 
         /* Mobile responsiveness */
@@ -125,7 +122,6 @@ try:
 
             # Home Assessment
             st.subheader(t['home_assessment'])
-            st.markdown(t['home_questions']['title'])
             home_clean = st.checkbox(t['home_questions']['cleanliness'])
             home_sink = st.checkbox(t['home_questions']['sink'])
             home_space = st.checkbox(t['home_questions']['space'])
@@ -256,7 +252,7 @@ try:
 
         fig.update_layout(
             title=t['monthly_overview'],
-            yaxis_title=f"{t['monthly_costs']} (THB)",
+            yaxis_title='Monthly Cost (THB)',
             height=400,
             margin=dict(t=50, b=0, l=0, r=0),
             paper_bgcolor='rgba(0,0,0,0)',
@@ -290,38 +286,25 @@ try:
             'CCC': [f"฿{st.session_state.yearly_costs['ccc'][k]:,.2f}" for k in ['1_year', '5_years', '10_years']]
         })
 
-        # Add custom CSS for table alignment
+        # Create a styled table with right-aligned numeric columns
         st.markdown("""
         <style>
-        table.dataframe {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        table.dataframe th {
-            text-align: left !important;
-            padding: 8px;
-            background-color: #f8f9fa;
-        }
-        table.dataframe td {
-            padding: 8px;
-            border-bottom: 1px solid #dee2e6;
-        }
-        table.dataframe td:not(:first-child) {
+        .right-aligned {
             text-align: right !important;
-            font-family: 'Roboto Mono', monospace;
+            font-family: monospace;
         }
         </style>
         """, unsafe_allow_html=True)
 
-        # Display table with right-aligned numeric columns
-        st.table(projections_df)
+        # Convert DataFrame to HTML with custom styling
+        table_html = projections_df.to_html(classes=['right-aligned'], escape=False, index=False)
+        st.markdown(table_html, unsafe_allow_html=True)
 
         # Action buttons
         cols = st.columns([4, 1, 1])
         with cols[1]:
             if st.button(t['start_over']):
-                for key in list(st.session_state.keys()):
-                    del st.session_state[key]
+                st.session_state.clear()
                 st.experimental_rerun()
         with cols[2]:
             if st.button(t['print']):
@@ -336,5 +319,5 @@ try:
 
 except Exception as e:
     st.error(f"An error occurred: {str(e)}")
-    st.write("Error details:", str(e))
+    st.error("Please try refreshing the page. If the problem persists, contact support.")
     sys.exit(1)
