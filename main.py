@@ -667,7 +667,32 @@ try:
                     st.markdown("<div class='cost-breakdown'>", unsafe_allow_html=True)
                     for item, cost in st.session_state.detailed_costs[treatment].items():
                         if cost > 0:
-                            st.markdown(f"• {item}: <b>฿{int(cost):,}</b>", unsafe_allow_html=True)
+                            # Map Thai cost items to translated keys
+                            translated_item = item
+                            # Common Thai cost item translations
+                            thai_to_english = {
+                                'ค่าร่วมจ่ายประกัน': t['cost_items']['insurance_copay'],
+                                'ค่าฟอกเลือด': t['cost_items']['base_cost'],
+                                'ค่ารักษาพื้นฐาน': t['cost_items']['base_cost'],
+                                'ค่ายา': t['cost_items']['medicine'],
+                                'ค่าเวชภัณฑ์': t['cost_items']['medicine'],
+                                'ค่าเครื่องและอุปกรณ์': t['cost_items']['equipment'],
+                                'ค่าสาธารณูปโภค': t['cost_items']['utilities'],
+                                'ค่าน้ำ/ไฟ': t['cost_items']['utilities'],
+                                'ค่าเดินทาง ไป-กลับ': t['cost_items']['travel'],
+                                'ค่าเดินทาง': t['cost_items']['travel'],
+                                'ค่าอาหาร/เครื่องดื่ม/ขนม': t['cost_items']['food'],
+                                'ค่าอาหาร': t['cost_items']['food'],
+                                'ค่าจ้างผู้ดูแล': t['cost_items']['caregiver'],
+                                'ค่าที่พัก': t['cost_items']['accommodation'],
+                                'ค่าปรับปรุงบ้าน': t['cost_items']['home_modification']
+                            }
+                            
+                            # Try to translate the item if it exists in the mapping
+                            if item in thai_to_english:
+                                translated_item = thai_to_english[item]
+                                
+                            st.markdown(f"• {translated_item}: <b>฿{int(cost):,}</b>", unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)  # Close the section container
