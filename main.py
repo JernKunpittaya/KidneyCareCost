@@ -684,7 +684,8 @@ try:
                 with st.expander(t['see_details']):
                     st.markdown("<div class='cost-breakdown'>", unsafe_allow_html=True)
                     for item, cost in st.session_state.detailed_costs[treatment].items():
-                        if cost > 0:
+                        # Only show costs that are 10 or greater
+                        if cost >= 10:
                             # Check if this is a one-off cost (home modification)
                             is_one_off = 'modification' in item.lower() or 'ค่าปรับปรุงบ้าน' in item.lower() or 'home modification' in item.lower()
                             
