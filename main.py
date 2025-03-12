@@ -720,7 +720,11 @@ try:
                 st.rerun()
         with cols[2]:
             if st.button(t['print'], use_container_width=True):
-                st.balloons()
+                st.markdown("""
+                <script>
+                    window.print();
+                </script>
+                """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Footer notes
