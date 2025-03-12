@@ -273,7 +273,8 @@ TRANSLATIONS = {
             'caregiver': 'ค่าผู้ดูแล',
             'equipment': 'ค่าอุปกรณ์',
             'utilities': 'ค่าสาธารณูปโภค',
-            'home_modification': 'ค่าปรับปรุงบ้าน'
+            'home_modification': 'ค่าปรับปรุงบ้าน',
+            'insurance_copay': 'ค่าร่วมจ่ายประกัน'
         },
         'cost_comparison': 'เปรียบเทียบค่าใช้จ่าย',
         'monthly_overview': 'ภาพรวมค่าใช้จ่ายรายเดือน',
@@ -348,7 +349,8 @@ TRANSLATIONS = {
             'caregiver': 'Caregiver',
             'equipment': 'Equipment',
             'utilities': 'Utilities',
-            'home_modification': 'Home modifications'
+            'home_modification': 'Home modifications',
+            'insurance_copay': 'Insurance copayment'
         },
         'cost_comparison': 'Cost Comparison',
         'monthly_overview': 'Monthly Cost Overview',

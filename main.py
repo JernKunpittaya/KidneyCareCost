@@ -434,37 +434,113 @@ try:
                         return rates.get(treatment_type, 0)
                     return 0
 
+                # Import cost data
+                from utils.cost_data import get_monthly_costs, get_one_off_costs
+
                 # Calculate detailed costs
-                detailed_costs = {
-                    'hd': {
-                        t['cost_items']['base_cost']: 30000 * coverage_factor,
-                        t['cost_items']['medicine']: 5000 * coverage_factor,
-                        t['cost_items']['travel']: travel_cost * visits_per_month,
-                        t['cost_items']['food']: food_cost * visits_per_month,
-                        t['cost_items']['caregiver']: calculate_caregiver_cost('hd')
-                    },
-                    'pd': {
-                        t['cost_items']['base_cost']: 25000 * coverage_factor,
-                        t['cost_items']['medicine']: 4000 * coverage_factor,
-                        t['cost_items']['equipment']: 3000 * coverage_factor,
-                        t['cost_items']['utilities']: 500,
-                        t['cost_items']['caregiver']: calculate_caregiver_cost('pd'),
-                        t['cost_items']['home_modification']: 5000 if not all([home_clean, home_sink, home_space, home_private]) else 0
-                    },
-                    'apd': {
-                        t['cost_items']['base_cost']: 35000 * coverage_factor,
-                        t['cost_items']['medicine']: 4000 * coverage_factor,
-                        t['cost_items']['equipment']: 5000 * coverage_factor,
-                        t['cost_items']['utilities']: 1000,
-                        t['cost_items']['caregiver']: calculate_caregiver_cost('apd'),
-                        t['cost_items']['home_modification']: 5000 if not all([home_clean, home_sink, home_space, home_private]) else 0
-                    },
-                    'ccc': {
-                        t['cost_items']['base_cost']: 15000 * coverage_factor,
-                        t['cost_items']['medicine']: 3000 * coverage_factor,
-                        t['cost_items']['caregiver']: calculate_caregiver_cost('ccc')
-                    }
-                }
+                detailed_costs = {}
+                
+                # Get HD costs
+                hd_costs = get_monthly_costs('hd')
+                detailed_costs['hd'] = {}
+                
+                # Adjust for user inputs
+                if caregiver_type != t['hired_caregiver']:
+                    hd_costs.pop('ค่าจ้างผู้ดูแล', None)
+                
+                # Override travel and food costs if user provided them
+                if travel_cost > 0:
+                    hd_costs['ค่าเดินทาง ไป-กลับ'] = travel_cost * visits_per_month
+                
+                if food_cost > 0:
+                    hd_costs['ค่าอาหาร/เครื่องดื่ม/ขนม'] = food_cost * visits_per_month
+                
+                # Income effects - only if employed
+                if employment != t['yes']:
+                    hd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย', None)
+                elif work_impact == t['no_income_effect']:
+                    hd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย', None)
+                elif monthly_income > 0:
+                    if work_impact == t['leave_job']:
+                        hd_costs['รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย'] = monthly_income
+                    elif work_impact == t['work_during_dialysis']:
+                        hd_costs['รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย'] = monthly_income * 0.3  # 30% income loss
+                
+                # Add insurance coverage effects
+                if coverage_factor > 0:
+                    detailed_costs['hd'][t['cost_items']['insurance_copay']] = 30000 * coverage_factor
+                
+                # Add all remaining HD costs to the detailed costs
+                for cost_name, cost_value in hd_costs.items():
+                    detailed_costs['hd'][cost_name] = cost_value
+                
+                # Get PD (CAPD) costs
+                pd_costs = get_monthly_costs('pd')
+                detailed_costs['pd'] = {}
+                
+                # Adjust for user inputs
+                if caregiver_type != t['hired_caregiver']:
+                    pd_costs.pop('ค่าจ้างผู้ดูแล', None)
+                
+                # Income effects
+                if employment != t['yes']:
+                    pd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย', None)
+                    pd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของญาติ', None)
+                
+                # Home modification costs for PD
+                pd_one_off = get_one_off_costs('pd')
+                if all([home_clean, home_sink, home_space, home_private]):
+                    pd_one_off.pop('Home modification cost', None)
+                else:
+                    detailed_costs['pd'][t['cost_items']['home_modification']] = pd_one_off.get('Home modification cost', 0)
+                
+                # Add insurance coverage effects
+                if coverage_factor > 0:
+                    detailed_costs['pd'][t['cost_items']['insurance_copay']] = 25000 * coverage_factor
+                
+                # Add all remaining PD costs to the detailed costs
+                for cost_name, cost_value in pd_costs.items():
+                    detailed_costs['pd'][cost_name] = cost_value
+                
+                # Get APD costs
+                apd_costs = get_monthly_costs('apd')
+                detailed_costs['apd'] = {}
+                
+                # Adjust for user inputs
+                if caregiver_type != t['hired_caregiver']:
+                    apd_costs.pop('ค่าจ้างผู้ดูแล', None)
+                
+                # Income effects
+                if employment != t['yes']:
+                    apd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย', None)
+                    apd_costs.pop('รายได้ที่เสียเนื่องจากขาดงานของญาติ', None)
+                
+                # Home modification costs for APD
+                apd_one_off = get_one_off_costs('apd')
+                if all([home_clean, home_sink, home_space, home_private]):
+                    apd_one_off.pop('Home modification cost', None)
+                else:
+                    detailed_costs['apd'][t['cost_items']['home_modification']] = apd_one_off.get('Home modification cost', 0)
+                
+                # Add insurance coverage effects
+                if coverage_factor > 0:
+                    detailed_costs['apd'][t['cost_items']['insurance_copay']] = 35000 * coverage_factor
+                
+                # Add all remaining APD costs to the detailed costs
+                for cost_name, cost_value in apd_costs.items():
+                    detailed_costs['apd'][cost_name] = cost_value
+                
+                # Get CCC costs - mostly one-off
+                ccc_costs = {}
+                detailed_costs['ccc'] = {}
+                
+                # Add palliative care monthly costs (estimated)
+                detailed_costs['ccc'][t['cost_items']['base_cost']] = 15000 * coverage_factor
+                detailed_costs['ccc'][t['cost_items']['medicine']] = 3000 * coverage_factor
+                
+                # Add caregiver costs if applicable
+                if caregiver_type == t['hired_caregiver']:
+                    detailed_costs['ccc'][t['cost_items']['caregiver']] = 8741  # Using HD caregiver cost as estimate
 
                 # Calculate monthly totals
                 monthly_totals = {
