@@ -553,13 +553,27 @@ try:
                     for treatment, costs in detailed_costs.items()
                 }
 
-                # Calculate yearly projections
+                # Separate one-off costs from monthly costs
+                one_off_costs = {
+                    treatment: sum([cost for item, cost in costs.items() 
+                                   if 'modification' in item.lower() or 'home modification' in item.lower()])
+                    for treatment, costs in detailed_costs.items()
+                }
+                
+                # Recalculate monthly totals without one-off costs
+                monthly_recurring = {
+                    treatment: monthly_totals[treatment] - one_off_costs[treatment]
+                    for treatment in monthly_totals.keys()
+                }
+                
+                # Calculate yearly projections (one-off costs added just once)
                 yearly_costs = {}
-                for treatment, monthly_cost in monthly_totals.items():
+                for treatment, monthly_cost in monthly_recurring.items():
+                    one_off = one_off_costs[treatment]
                     yearly_costs[treatment] = {
-                        '1_year': int(monthly_cost * 12),
-                        '5_years': int(sum([monthly_cost * 12 * (1.03 ** year) for year in range(5)])),
-                        '10_years': int(sum([monthly_cost * 12 * (1.03 ** year) for year in range(10)]))
+                        '1_year': int(monthly_cost * 12 + one_off),
+                        '5_years': int(sum([monthly_cost * 12 * (1.03 ** year) for year in range(5)]) + one_off),
+                        '10_years': int(sum([monthly_cost * 12 * (1.03 ** year) for year in range(10)]) + one_off)
                     }
 
                 # Store results in session state
