@@ -547,11 +547,12 @@ try:
                     if utility_cost > 0:
                         detailed_costs[treatment][t['cost_items']['utilities']] = utility_cost
 
-                # Calculate monthly totals
-                monthly_totals = {
-                    treatment: int(sum(costs.values()))
-                    for treatment, costs in detailed_costs.items()
-                }
+                # Calculate monthly totals and round down numbers under 10 to 0
+                monthly_totals = {}
+                for treatment, costs in detailed_costs.items():
+                    # Round down small values to 0 first
+                    rounded_costs = {item: 0 if value < 10 else value for item, value in costs.items()}
+                    monthly_totals[treatment] = int(sum(rounded_costs.values()))
 
                 # Identify one-off costs but keep them separate from monthly calculations
                 one_off_costs = {}
