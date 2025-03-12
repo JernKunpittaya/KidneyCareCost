@@ -1,46 +1,99 @@
 /* Main theme colors */
 :root {
-    --primary-color: #3498db;
-    --secondary-color: #2ecc71;
+    --primary-color: #1e88e5;
+    --secondary-color: #26a69a;
     --background-color: #ffffff;
     --text-color: #2c3e50;
+    --light-gray: #f8f9fa;
+    --card-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    --border-radius: 8px;
 }
 
 /* Typography */
 h1, h2, h3 {
     color: var(--text-color);
     font-family: 'Helvetica Neue', sans-serif;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-size: 2.2rem;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+p, li {
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
 /* Custom Streamlit elements */
 .stButton > button {
     background-color: var(--primary-color);
     color: white;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     padding: 10px 20px;
     font-weight: bold;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.stButton > button:hover {
+    background-color: #1565c0;
+    transform: translateY(-2px);
 }
 
 .stProgress > div > div {
     background-color: var(--secondary-color);
+    height: 6px;
+    border-radius: 3px;
 }
 
 /* Form elements */
 .stRadio > div {
     background-color: var(--background-color);
-    padding: 10px;
-    border-radius: 5px;
-    margin: 5px 0;
+    padding: 12px;
+    border-radius: var(--border-radius);
+    margin: 8px 0;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s ease;
+}
+
+.stRadio > div:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .stNumberInput > div > div > input {
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     border: 1px solid #e0e0e0;
+    padding: 10px;
+    transition: all 0.2s ease;
+}
+
+.stNumberInput > div > div > input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.2);
+}
+
+.stCheckbox > div {
+    padding: 5px 0;
 }
 
 /* Accessibility improvements */
 button:focus {
-    outline: 3px solid var(--primary-color);
+    outline: 3px solid rgba(30, 136, 229, 0.4);
 }
 
 /* Mobile responsiveness */
@@ -48,13 +101,111 @@ button:focus {
     .stButton > button {
         width: 100%;
     }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    h3 {
+        font-size: 1.3rem;
+    }
 }
 
 /* Treatment comparison cards */
-.element-container {
+.treatment-card {
     background-color: white;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin: 10px 0;
+    border-radius: var(--border-radius);
+    margin: 15px 0;
+    border-top: 4px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.treatment-card:hover {
+    transform: translateY(-5px);
+}
+
+.cost-value {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 600;
+    color: var(--primary-color);
+    background-color: rgba(30, 136, 229, 0.1);
+    padding: 5px 10px;
+    border-radius: 4px;
+    float: right;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+thead th {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+tbody tr:nth-child(even) {
+    background-color: var(--light-gray);
+}
+
+tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* Expander styling */
+.streamlit-expanderHeader {
+    background-color: var(--light-gray);
+    border-radius: var(--border-radius);
+    padding: 10px 15px !important;
+    font-weight: 600;
+}
+
+.streamlit-expanderContent {
+    border: 1px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    padding: 15px !important;
+}
+
+/* Language selector */
+.stSelectbox {
+    max-width: 200px;
+}
+
+/* Footer styling */
+footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* Section styling */
+.section-container {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.section-container h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e0e0e0;
 }
