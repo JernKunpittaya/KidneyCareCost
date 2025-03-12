@@ -545,9 +545,14 @@ try:
                 
                 # Add utilities costs for all treatment types
                 for treatment in ['hd', 'pd', 'apd', 'ccc']:
+                    # Check for Thai utilities key
                     if 'ค่าสาธารณูปโภค' in detailed_costs[treatment]:
-                        # Map to the translated key
                         utility_cost = detailed_costs[treatment].pop('ค่าสาธารณูปโภค', 0)
+                        if utility_cost > 0:
+                            detailed_costs[treatment][t['cost_items']['utilities']] = utility_cost
+                    # Also check for English "Utilities" key (capital U)
+                    elif 'Utilities' in detailed_costs[treatment]:
+                        utility_cost = detailed_costs[treatment].pop('Utilities', 0)
                         if utility_cost > 0:
                             detailed_costs[treatment][t['cost_items']['utilities']] = utility_cost
 
@@ -729,8 +734,9 @@ try:
                 st.rerun()
         with cols[2]:
             if st.button(t['print'], use_container_width=True):
-                # Direct print trigger without relying on JavaScript events
-                html_content = """
+                # Create a better print functionality with iframe
+                st.markdown("""
+                <iframe name="print_frame" style="display:none;"></iframe>
                 <style>
                 @media print {
                     /* Hide Streamlit elements when printing */
@@ -751,18 +757,27 @@ try:
                     }
                 }
                 </style>
+                """, unsafe_allow_html=True)
                 
-                <script>
-                    // Execute print directly
-                    window.print();
-                </script>
-                """
-                
-                components_iframe = components.html(
-                    html_content,
-                    height=0,
-                    scrolling=False
-                )
+                # Add a direct print button that's more reliable
+                st.markdown("""
+                <div style="text-align: center; margin-top: 20px;">
+                    <button 
+                        onclick="window.print()" 
+                        style="
+                            background-color: #1e88e5; 
+                            color: white; 
+                            border: none; 
+                            padding: 10px 20px; 
+                            border-radius: 4px;
+                            font-size: 16px;
+                            cursor: pointer;
+                        "
+                    >
+                        Click here to print this report
+                    </button>
+                </div>
+                """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Footer notes
