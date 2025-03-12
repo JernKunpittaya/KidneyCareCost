@@ -536,16 +536,16 @@ try:
                 
                 # Add utilities costs for all treatment types
                 for treatment in ['hd', 'pd', 'apd', 'ccc']:
-                    # Check for Thai utilities key
-                    if 'ค่าสาธารณูปโภค' in detailed_costs[treatment]:
-                        utility_cost = detailed_costs[treatment].pop('ค่าสาธารณูปโภค', 0)
-                        if utility_cost > 0:
-                            detailed_costs[treatment][t['cost_items']['utilities']] = utility_cost
-                    # Also check for English "Utilities" key (capital U)
-                    elif 'Utilities' in detailed_costs[treatment]:
-                        utility_cost = detailed_costs[treatment].pop('Utilities', 0)
-                        if utility_cost > 0:
-                            detailed_costs[treatment][t['cost_items']['utilities']] = utility_cost
+                    # Check for Thai utilities keys and standardize them
+                    utility_keys = ['ค่าสาธารณูปโภค', 'ค่าน้ำ/ไฟ', 'Utilities', 'utilities']
+                    utility_cost = 0
+                    
+                    for key in utility_keys:
+                        if key in detailed_costs[treatment]:
+                            utility_cost += detailed_costs[treatment].pop(key, 0)
+                    
+                    if utility_cost > 0:
+                        detailed_costs[treatment][t['cost_items']['utilities']] = utility_cost
 
                 # Calculate monthly totals
                 monthly_totals = {
@@ -711,16 +711,40 @@ try:
         html_table += """
             </tbody>
         </table>
+        """
+        
+        # Print button script for the yearly projection table
+        html_table += f"""
+        <script>
+        function printProjections() {{
+          const projectionTable = document.querySelector('.dataframe').outerHTML;
+          const title = "<h2 style='text-align:center;'>{t['yearly_projections']}</h2>";
+          const printWindow = window.open('', '_blank');
+          printWindow.document.write('<html><head><title>{t['yearly_projections']}</title>');
+          printWindow.document.write('<style>body {{ font-family: Arial, sans-serif; }} table {{ width: 100%; border-collapse: collapse; }} th {{ background-color: #1e88e5; color: white; text-align: left; padding: 12px; }} td {{ padding: 10px; border-bottom: 1px solid #ddd; }} tr:nth-child(even) {{ background-color: #f2f2f2; }}</style>');
+          printWindow.document.write('</head><body>');
+          printWindow.document.write(title);
+          printWindow.document.write(projectionTable);
+          printWindow.document.write('</body></html>');
+          printWindow.document.close();
+          printWindow.print();
+        }}
+        </script>
         </div>
         """
 
         st.markdown(html_table, unsafe_allow_html=True)
 
-        # Action buttons with confirmation for Start Over
+        # Action buttons for print and start over
         st.markdown("<div class='section-container'>", unsafe_allow_html=True)
         cols = st.columns([1, 3, 1])
         with cols[1]:
-            # Create a more prominent button with confirmation dialog
+            # Print yearly projections button
+            st.markdown(f"""
+            <button onclick="printProjections()" style="width: 100%; margin-bottom: 15px; padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">{t['print']}</button>
+            """, unsafe_allow_html=True)
+            
+            # Create a more prominent Start Over button with confirmation dialog
             start_over_clicked = st.button(
                 t['start_over'], 
                 use_container_width=True,
@@ -731,7 +755,7 @@ try:
             # Add confirmation dialog for Start Over
             if start_over_clicked:
                 confirm = st.warning(
-                    f"⚠️ {t.get('confirm_reset', 'Are you sure you want to start over? All your data will be lost.')}", 
+                    f"⚠️ {t['confirm_reset']}", 
                     icon="⚠️"
                 )
                 confirm_cols = st.columns([1, 1])
