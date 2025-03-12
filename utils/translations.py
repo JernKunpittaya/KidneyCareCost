@@ -139,7 +139,7 @@ TRANSLATIONS = {
         'no_income': 'No income',
         'annual_income': 'Annual income (THB)',
         'monthly_equivalent': 'Approximate monthly income:',
-        
+
         'caregiver_needs': 'Caregiver Needs',
         'caregiver_type': 'Do you need a caregiver?',
         'family_caregiver': 'Family caregiver',
@@ -159,7 +159,7 @@ TRANSLATIONS = {
             'part_time': 'Daytime care only',
             'per_visit': 'Only during treatment'
         },
-        
+
         'home_assessment': 'Home Assessment',
         'home_questions': {
             'title': 'Please answer these questions about your home conditions',
@@ -168,18 +168,18 @@ TRANSLATIONS = {
             'space': 'I have enough space for equipment and treatment',
             'crowding': 'I have private space for treatment'
         },
-        
+
         'treatment_frequency': 'Treatment Frequency',
         'hd_frequency': 'HD treatment frequency',
         'freq_2': '2 times per week',
         'freq_3': '3 times per week',
-        
+
         'travel_info': 'Travel Information',
         'distance': 'Distance to dialysis center (km)',
         'travel_cost': 'Travel cost per visit (THB)',
         'accommodation_cost': 'Accommodation cost (if applicable)',
         'food_cost': 'Food cost during travel per visit (THB)',
-        
+
         'cost_items': {
             'base_cost': 'Base treatment cost',
             'medicine': 'Medicine',
@@ -192,14 +192,14 @@ TRANSLATIONS = {
             'home_modification': 'Home modifications',
             'insurance_copay': 'Insurance copayment'
         },
-        
+
         'treatment_types': {
             'hd': 'Hemodialysis (HD)',
             'pd': 'Continuous Ambulatory Peritoneal Dialysis (CAPD)',
             'apd': 'Automated Peritoneal Dialysis (APD)',
             'ccc': 'Conservative Care (CCC)'
         },
-        
+
         'calculate': 'Calculate Costs',
         'monthly_overview': 'Monthly Cost Overview',
         'yearly_projections': 'Yearly Cost Projections',
@@ -208,7 +208,7 @@ TRANSLATIONS = {
         'confirm_reset': 'Are you sure you want to start over? All your data will be lost.',
         'yes_start_over': 'Yes, start over',
         'no_cancel': 'No, cancel',
-        
+
         'notes': 'Notes',
         'costs_may_vary': 'Costs may vary based on multiple factors, including location, disease severity, and response to treatment.',
         'insurance_note': 'Displayed costs are estimates only and may differ from actual costs covered by your health insurance.',
@@ -224,82 +224,7 @@ TRANSLATIONS = {
         'treatment_comparison': 'Treatment Comparison',
         'monthly_costs': 'Monthly Costs',
         'yearly_costs': 'Yearly Costs',
-        'total_costs': 'Total Costs'
-    },
-    'en': {
-        'title': 'Kidney Dialysis Cost Calculator',
-        'subtitle': 'Compare costs for different chronic kidney disease treatment options',
-        'insurance_type': 'Insurance Type',
-        'insurance_options': {
-            'gold_card': 'Gold Card (30 Baht Scheme)',
-            'civil_servant': 'Civil Servant Medical Benefit',
-            'social_security': 'Social Security',
-            'private_insurance': 'Private Insurance',
-            'other': 'Other'
-        },
-        'basic_info': 'Basic Information',
-        'employment': 'Are you currently employed?',
-        'yes': 'Yes',
-        'no': 'No',
-        'work_impact': 'How will dialysis affect your work?',
-        'leave_job': 'I will have to leave my job entirely',
-        'work_during_dialysis': 'I will be able to work, just not during dialysis',
-        'no_income_effect': 'Dialysis will not affect how much I get paid',
-        'monthly_income': 'Your monthly income (THB)',
-        'caregiver_needs': 'Caregiver Needs',
-        'caregiver_type': 'Do you need a caregiver?',
-        'family_caregiver': 'Family caregiver',
-        'hired_caregiver': 'Hired caregiver',
-        'no_caregiver': 'No caregiver needed',
-        'caregiver_costs': {
-            'title': 'Average caregiver costs'
-        },
-        'home_assessment': 'Home Assessment',
-        'home_questions': {
-            'cleanliness': 'My home is clean and dust-free',
-            'sink': 'I have a clean sink',
-            'space': 'I have enough space for equipment and treatment',
-            'crowding': 'I have private space for treatment'
-        },
-        'treatment_frequency': 'Treatment Frequency',
-        'hd_frequency': 'HD treatment frequency',
-        'freq_2': '2 times per week',
-        'freq_3': '3 times per week',
-        'travel_info': 'Travel Information',
-        'distance': 'Distance to dialysis center (km)',
-        'travel_cost': 'Travel cost per visit (THB)',
-        'food_cost': 'Food cost during travel per visit (THB)',
-        'calculate': 'Calculate Costs',
-        'cost_items': {
-            'base_cost': 'Base treatment cost',
-            'medicine': 'Medicine',
-            'travel': 'Travel',
-            'food': 'Food',
-            'caregiver': 'Caregiver',
-            'equipment': 'Equipment',
-            'utilities': 'Utilities',
-            'home_modification': 'Home modifications',
-            'insurance_copay': 'Insurance copayment'
-        },
-        'cost_comparison': 'Cost Comparison',
-        'monthly_overview': 'Monthly Cost Overview',
-        'treatment_types': {
-            'hd': 'Hemodialysis (HD)',
-            'pd': 'Continuous Ambulatory Peritoneal Dialysis (CAPD)',
-            'apd': 'Automated Peritoneal Dialysis (APD)',
-            'ccc': 'Conservative Care (CCC)'
-        },
-        'see_details': 'See details',
-        'yearly_projections': 'Yearly Cost Projections',
-        'time_period': 'Time Period',
-        'year': 'year',
-        'years': 'years',
-        'start_over': 'Start Over',
-        'print': 'Print',
-        'notes': 'Notes',
-        'per_month': 'per month',
-        'costs_may_vary': 'Costs may vary based on multiple factors, including location, disease severity, and response to treatment.',
-        'insurance_note': 'Displayed costs are estimates only and may differ from actual costs covered by your health insurance.',
-        'consult_note': 'Please consult your physician for advice tailored to your situation.'
+        'total_costs': 'Total Costs',
+        'cost_data_source': 'This is the average cost from our research data from hospitals in Thailand.'
     }
 }
