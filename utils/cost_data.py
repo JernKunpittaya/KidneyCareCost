@@ -31,6 +31,7 @@ COST_DATA = {
         'รายได้ที่เสียเนื่องจากขาดงานของผู้ป่วย': {'type': 'Opportunity', 'category': 'Maintenance', 'frequency': 'Monthly', 'mean': 212},
         'รายได้ที่เสียเนื่องจากขาดงานของญาติ': {'type': 'Opportunity', 'category': 'Maintenance', 'frequency': 'Monthly', 'mean': 108},
         'ค่าที่พัก': {'type': 'Accounting', 'category': 'Complication', 'frequency': 'Monthly', 'mean': 2.41},
+        'ค่าสาธารณูปโภค': {'type': 'Accounting', 'category': 'Maintenance', 'frequency': 'Monthly', 'mean': 500},
         'Home modification cost': {'type': 'Accounting', 'category': 'One-off', 'frequency': 'One-off', 'mean': 17149},
         'Lifetime cost paid by household with palliative care': {'type': 'Accounting', 'category': 'One-off', 'frequency': 'One-off', 'mean': 25299}
     },

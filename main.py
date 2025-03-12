@@ -541,6 +541,14 @@ try:
                 # Add caregiver costs if applicable
                 if caregiver_type == t['hired_caregiver']:
                     detailed_costs['ccc'][t['cost_items']['caregiver']] = 8741  # Using HD caregiver cost as estimate
+                
+                # Add utilities costs for all treatment types
+                for treatment in ['hd', 'pd', 'apd', 'ccc']:
+                    if 'ค่าสาธารณูปโภค' in detailed_costs[treatment]:
+                        # Map to the translated key
+                        utility_cost = detailed_costs[treatment].pop('ค่าสาธารณูปโภค', 0)
+                        if utility_cost > 0:
+                            detailed_costs[treatment][t['cost_items']['utilities']] = utility_cost
 
                 # Calculate monthly totals
                 monthly_totals = {
