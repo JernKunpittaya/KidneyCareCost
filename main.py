@@ -720,9 +720,64 @@ try:
                 st.rerun()
         with cols[2]:
             if st.button(t['print'], use_container_width=True):
+                # Create a printable version with CSS for print media
                 st.markdown("""
+                <style>
+                @media print {
+                    /* Hide Streamlit elements when printing */
+                    header, footer, .stButton, .stSidebar, iframe, .viewerBadge {
+                        display: none !important;
+                    }
+                    
+                    /* Ensure content is visible */
+                    .main .block-container {
+                        max-width: 100% !important;
+                        padding: 0 !important;
+                    }
+                    
+                    /* Make text visible on white background */
+                    * {
+                        color: black !important;
+                        background-color: white !important;
+                    }
+                }
+                </style>
+                
                 <script>
-                    window.print();
+                    // More robust print function that works in iframes
+                    function printContent() {
+                        try {
+                            window.print();
+                        } catch (e) {
+                            console.error("Print failed:", e);
+                            // Fallback - open in new window
+                            const content = document.querySelector('.main .block-container').innerHTML;
+                            const printWindow = window.open('', '_blank');
+                            printWindow.document.write(`
+                                <html>
+                                <head>
+                                    <title>Print Report</title>
+                                    <style>
+                                        body { font-family: Arial, sans-serif; padding: 20px; }
+                                        table { border-collapse: collapse; width: 100%; }
+                                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                                        th { background-color: #f2f2f2; }
+                                    </style>
+                                </head>
+                                <body>
+                                    ${content}
+                                </body>
+                                </html>
+                            `);
+                            printWindow.document.close();
+                            printWindow.focus();
+                            printWindow.print();
+                            printWindow.close();
+                        }
+                    }
+                    
+                    // Execute after a short delay to ensure content is loaded
+                    setTimeout(printContent, 500);
                 </script>
                 """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
